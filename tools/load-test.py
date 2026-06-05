@@ -1,0 +1,1 @@
+print ('load_test_example')

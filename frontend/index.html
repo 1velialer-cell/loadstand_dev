@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Loadstand</title>
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+  <div id="root" class="app">
+    <div id="login-card" class="card center">
+      <h1 class="title">Авторизация</h1>
+      <div class="field">
+        <input id="username" class="input" placeholder="username" />
+      </div>
+      <div class="field">
+        <input id="password" class="input" type="password" placeholder="password" />
+      </div>
+      <div class="actions">
+        <button id="btn-login" class="btn primary">Вход</button>
+      </div>
+      <div id="login-error" class="error"></div>
+    </div>
+
+    <div id="app-ui" class="hidden">
+      <!-- твой основной интерфейс -->
+      <header class="app-header">
+        <div class="header-left">
+          <img src="/api/logo" alt="Loadstand logo" class="site-logo" />
+          <div class="tabs" role="tablist">
+            <button data-tab="smoke" class="tab active">smoke</button>
+            <button data-tab="loading" class="tab">loading</button>
+            <button data-tab="stability" class="tab">stability</button>
+          </div>
+        </div>
+        
+        <div class="header-right">
+          <span id="user-badge" class="badge">user</span>
+          <button id="btn-logout" class="btn ghost">Выход</button>
+        </div>
+      </header>
+
+      <main class="page-content">
+        <section class="panel panel-wide">
+          <h2 id="panel-title">smoke</h2>
+
+          <div class="control-row">
+            <button id="smoke_button" class="btn primary">Запуск</button>
+            <button id="loading_button" class="btn primary hidden">Запуск</button>
+            <button id="stability_button" class="btn primary hidden">Запуск</button>
+          </div>
+
+          <div class="output">
+            <h3>Вывод</h3>
+            <pre id="tool-output" style="white-space: pre-wrap; max-height:400px; overflow:auto;"></pre>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
