@@ -3,11 +3,12 @@ from fastapi.responses import JSONResponse
 import os
 import asyncio
 from typing import Dict
+from backend.config import settings
 
 router = APIRouter()
 
 BASE_DIR = os.path.dirname(__file__)
-TOOLS_DIR = os.path.normpath(os.path.join(BASE_DIR, "..", "tools"))
+TOOLS_DIR = settings.TOOLS_DIR
 ALLOWED_TOOLS = {"smoke-test.py", "load-test.py", "stability-test.py"}
 TOOL_TIMEOUT = 180  # увеличил до 3 минут
 

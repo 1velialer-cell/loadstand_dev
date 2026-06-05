@@ -1,4 +1,4 @@
-const API = "http://192.168.2.128:4500";
+const API = window.location.origin;
 const authKey = "ls_token";
 const el = id => document.getElementById(id);
 
