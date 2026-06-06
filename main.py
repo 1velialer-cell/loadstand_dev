@@ -4,9 +4,11 @@ from fastapi.responses import FileResponse
 from backend.core.config import settings
 from backend.routers.auth import router as auth_router
 from backend.routers.tools import router as tools_router
+from backend.routers.logo import router as logo_router
 
 app = FastAPI(title="LoadStand", version="0.2.0")
 app.mount("/static", StaticFiles(directory=str(settings.FRONTEND_DIR)), name="static")
+app.include_router(logo_router)
 
 @app.get("/")
 async def serve_frontend():

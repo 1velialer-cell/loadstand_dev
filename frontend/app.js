@@ -3,8 +3,8 @@ const authKey = "ls_token";
 const el = id => document.getElementById(id);
 
 const MESSAGES = {
-  loginError: "Authorization Error",
-  networkError: "Network Error",
+  loginError: "Неверные учётные данные",
+  networkError: "Ошибка сети",
   testStart: "🚀 Запуск",
   testSuccess: "✅ Тест завершён",
   unauthorized: "Сессия истекла"
@@ -18,23 +18,41 @@ const tabToScript = {
   stability: "stability-test.py"
 };
 
+// ====================== Универсальная обёртка с токеном ======================
+async function apiFetch(endpoint, method = "GET", body = null) {
+  const token = localStorage.getItem(authKey);
+  const headers = { "Content-Type": "application/json" };
+  if (token) headers["Authorization"] = `Bearer ${token}`;
+
+  const options = { method, headers };
+  if (body) options.body = JSON.stringify(body);
+
+  const r = await fetch(API + endpoint, options);
+
+  if (r.status === 401) {
+    throw { unauthorized: true };
+  }
+  if (!r.ok) {
+    throw new Error(`HTTP ${r.status}`);
+  }
+  return r.json();
+}
+
+// ====================== Запуск теста ======================
 async function runTool(tabName) {
   const script = tabToScript[tabName];
   const outputEl = el("tool-output");
-
   if (!outputEl) return;
 
   outputEl.innerHTML = `<span style="color:#888;">🚀 Запуск ${script}...</span><br><br>`;
   outputEl.scrollTop = outputEl.scrollHeight;
 
   try {
-    const result = await apiFetch("/api/run-tool", "POST", { name: script });
+    const result = await apiFetch("/tools/run", "POST", { name: script });
 
-    let html = `<strong>✅ Тест завершён</strong><br><br>`;
+    let html = `<strong>${MESSAGES.testSuccess}</strong><br><br>`;
 
-    if (result.status) {
-      html += `<strong>Статус:</strong> ${result.status}<br>`;
-    }
+    if (result.status) html += `<strong>Статус:</strong> ${result.status}<br>`;
     if (result.returncode !== undefined) {
       const color = result.returncode === 0 ? "#00ff00" : "#ff4444";
       html += `<strong>Код возврата:</strong> <span style="color:${color}">${result.returncode}</span><br><br>`;
@@ -43,7 +61,6 @@ async function runTool(tabName) {
     if (result.stdout?.trim()) {
       html += `<strong>Вывод:</strong><br><pre style="background:#1e1e1e; color:#ddd; padding:12px; border-radius:6px; white-space:pre-wrap; font-size:14px;">${escapeHtml(result.stdout)}</pre><br>`;
     }
-
     if (result.stderr?.trim()) {
       html += `<strong>Ошибки:</strong><br><pre style="background:#330000; color:#ff8888; padding:12px; border-radius:6px; white-space:pre-wrap; font-size:14px;">${escapeHtml(result.stderr)}</pre><br>`;
     }
@@ -84,7 +101,7 @@ document.querySelectorAll(".tab").forEach(tab => {
   });
 });
 
-// Привязка кнопок Запуск
+// Привязка кнопок
 ["smoke", "loading", "stability"].forEach(name => {
   const btn = el(`${name}_button`);
   if (btn) btn.addEventListener("click", () => runTool(name));
@@ -105,7 +122,7 @@ el("btn-login").addEventListener("click", async () => {
     });
 
     if (!r.ok) {
-      errEl.textContent = "Неверные учётные данные";
+      errEl.textContent = MESSAGES.loginError;
       return;
     }
 
@@ -114,7 +131,7 @@ el("btn-login").addEventListener("click", async () => {
     el("user-badge").textContent = u || "user";
     showMain();
   } catch (err) {
-    errEl.textContent = "Ошибка сети";
+    errEl.textContent = MESSAGES.networkError;
   }
 });
 
@@ -138,7 +155,7 @@ async function tryRestore() {
   if (!token) { showLogin(); return; }
 
   try {
-    await apiFetch("/api/status");
+    await apiFetch("/tools/run", "POST", { name: "smoke-test.py" }); // можно сделать отдельный /status позже
     showMain();
   } catch (e) {
     localStorage.removeItem(authKey);
