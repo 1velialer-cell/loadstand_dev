@@ -18,7 +18,7 @@ const tabToScript = {
   stability: "stability-test.py"
 };
 
-// ====================== Универсальная обёртка с токеном ======================
+// ====================== API Helper ======================
 async function apiFetch(endpoint, method = "GET", body = null) {
   const token = localStorage.getItem(authKey);
   const headers = { "Content-Type": "application/json" };
@@ -27,21 +27,23 @@ async function apiFetch(endpoint, method = "GET", body = null) {
   const options = { method, headers };
   if (body) options.body = JSON.stringify(body);
 
-  const r = await fetch(API + endpoint, options);
+  const response = await fetch(API + endpoint, options);
 
-  if (r.status === 401) {
+  if (response.status === 401) {
     throw { unauthorized: true };
   }
-  if (!r.ok) {
-    throw new Error(`HTTP ${r.status}`);
+  if (!response.ok) {
+    const errorText = await response.text().catch(() => "");
+    throw new Error(`HTTP ${response.status}: ${errorText}`);
   }
-  return r.json();
+  return response.json();
 }
 
 // ====================== Запуск теста ======================
 async function runTool(tabName) {
   const script = tabToScript[tabName];
   const outputEl = el("tool-output");
+
   if (!outputEl) return;
 
   outputEl.innerHTML = `<span style="color:#888;">🚀 Запуск ${script}...</span><br><br>`;
@@ -59,10 +61,10 @@ async function runTool(tabName) {
     }
 
     if (result.stdout?.trim()) {
-      html += `<strong>Вывод:</strong><br><pre style="background:#1e1e1e; color:#ddd; padding:12px; border-radius:6px; white-space:pre-wrap; font-size:14px;">${escapeHtml(result.stdout)}</pre><br>`;
+      html += `<strong>Вывод:</strong><br><pre style="background:#1e1e1e;color:#ddd;padding:12px;border-radius:6px;white-space:pre-wrap;font-size:14px;">${escapeHtml(result.stdout)}</pre><br>`;
     }
     if (result.stderr?.trim()) {
-      html += `<strong>Ошибки:</strong><br><pre style="background:#330000; color:#ff8888; padding:12px; border-radius:6px; white-space:pre-wrap; font-size:14px;">${escapeHtml(result.stderr)}</pre><br>`;
+      html += `<strong>Ошибки:</strong><br><pre style="background:#330000;color:#ff8888;padding:12px;border-radius:6px;white-space:pre-wrap;font-size:14px;">${escapeHtml(result.stderr)}</pre><br>`;
     }
 
     outputEl.innerHTML = html;
@@ -72,7 +74,8 @@ async function runTool(tabName) {
     if (e && e.unauthorized) {
       logout();
     } else {
-      outputEl.innerHTML = `<span style="color:red;">❌ Ошибка запуска теста:<br>${escapeHtml(String(e))}</span>`;
+      console.error(e);
+      outputEl.innerHTML = `<span style="color:red;">❌ Ошибка: ${escapeHtml(e.message || String(e))}</span>`;
     }
   }
 }

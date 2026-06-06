@@ -8,7 +8,7 @@ router = APIRouter(prefix="/tools", tags=["tools"])
 @router.post("/run", response_model=ToolResult)
 async def run_tool_endpoint(
     payload: ToolRunRequest,
-    user: str = Depends(get_current_user)
+    user: str = Depends(get_current_user) 
 ):
     result = await run_tool(payload.name)
     return result
