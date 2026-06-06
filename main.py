@@ -5,6 +5,7 @@ from backend.core.config import settings
 from backend.routers.auth import router as auth_router
 from backend.routers.tools import router as tools_router
 from backend.routers.logo import router as logo_router 
+from backend.routers.servers import (router as servers_router)
 
 app = FastAPI(
     title="LoadStand",
@@ -21,6 +22,7 @@ async def serve_frontend():
 app.include_router(auth_router)
 app.include_router(tools_router)
 app.include_router(logo_router)
+app.include_router(servers_router)
 
 if __name__ == "__main__":
     import uvicorn

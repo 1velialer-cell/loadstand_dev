@@ -23,14 +23,14 @@
     </div>
 
     <div id="app-ui" class="hidden">
-      <!-- твой основной интерфейс -->
       <header class="app-header">
         <div class="header-left">
           <img src="/api/logo" alt="Loadstand logo" class="site-logo" />
           <div class="tabs" role="tablist">
-            <button data-tab="smoke" class="tab active">smoke</button>
-            <button data-tab="loading" class="tab">loading</button>
-            <button data-tab="stability" class="tab">stability</button>
+            <button data-tab="smoke" class="tab active">SMOKE</button>
+            <button data-tab="loading" class="tab">LOADING</button>
+            <button data-tab="stability" class="tab">STABILITY</button>
+            <button data-tab="servers" class="tab">SERVERS</button>
           </div>
         </div>
         
@@ -53,6 +53,32 @@
           <div class="output">
             <h3>Вывод</h3>
             <pre id="tool-output" style="white-space: pre-wrap; max-height:400px; overflow:auto;"></pre>
+          </div>
+        </section>
+        <!-- страница сервера -->
+        <section id="servers-panel" class="panel panel-wide hidden"> 
+        <h3>Добавление сервера</h3>
+          <input id="srv-name" placeholder="Имя">
+          <input id="srv-host" placeholder="IP / Host">
+          <input id="srv-login" placeholder="SSH login">
+          <input id="srv-password" type="password" placeholder="SSH password">
+          <select id="srv-type">
+              <option value="">Тип</option>
+              <option value="media">Media</option>
+              <option value="load">Load</option>
+          </select>
+          <button id="add-server-btn">
+              Добавить
+          </button>
+                  <div class="servers-columns">
+              <div>
+                  <h3>Media</h3>
+                  <div id="media-list"></div>
+              </div>
+              <div>
+                  <h3>Load</h3>
+                  <div id="load-list"></div>
+              </div>
           </div>
         </section>
       </main>
