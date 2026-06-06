@@ -197,14 +197,14 @@ async function tryRestore() {
 async function createServer() {
     const name = el("srv-name").value.trim();
     const host = el("srv-host").value.trim();
-    const login = el("srv-login").value.trim();
-    const password = el("srv-password").value.trim();
+    const ssh_login = el("srv-login").value.trim();
+    const ssh_password = el("srv-password").value.trim();
     const type = el("srv-type").value;
     if (
         !name ||
         !host ||
-        !login ||
-        !password ||
+        !ssh_login ||
+        !ssh_password ||
         !type
     ) {
         alert("Заполните все поля");
