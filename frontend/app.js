@@ -2,27 +2,16 @@ const API = window.location.origin;
 const authKey = "ls_token";
 const el = id => document.getElementById(id);
 
+const MESSAGES = {
+  loginError: "Authorization Error",
+  networkError: "Network Error",
+  testStart: "🚀 Запуск",
+  testSuccess: "✅ Тест завершён",
+  unauthorized: "Сессия истекла"
+};
+
 let currentTab = "smoke";
 
-async function apiFetch(path, method = "GET", body) {
-  const token = localStorage.getItem(authKey);
-  const headers = { "Content-Type": "application/json" };
-  if (token) headers["Authorization"] = "Bearer " + token;
-
-  const res = await fetch(API + path, {
-    method,
-    headers,
-    body: body ? JSON.stringify(body) : undefined
-  });
-
-  if (res.status === 401) throw { unauthorized: true };
-  if (res.status === 204) return null;
-
-  const txt = await res.text();
-  try { return JSON.parse(txt); } catch { return txt; }
-}
-
-// ====================== Запуск тестов ======================
 const tabToScript = {
   smoke: "smoke-test.py",
   loading: "load-test.py",

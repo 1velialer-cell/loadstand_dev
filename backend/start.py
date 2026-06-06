@@ -7,29 +7,23 @@ from backend.config import settings
 
 router = APIRouter()
 
-BASE_DIR = os.path.dirname(__file__)
-TOOLS_DIR = settings.TOOLS_DIR
-ALLOWED_TOOLS = {"smoke-test.py", "load-test.py", "stability-test.py"}
-TOOL_TIMEOUT = 180  # увеличил до 3 минут
-
 def _resolve_tool_path(name: str) -> str:
-    if name not in ALLOWED_TOOLS:
+    if name not in settings.ALLOWED_TOOLS:
         raise ValueError("not_allowed")
     
-    candidate = os.path.normpath(os.path.join(TOOLS_DIR, name))
-    if not candidate.startswith(os.path.abspath(TOOLS_DIR) + os.sep):
+    candidate = os.path.normpath(os.path.join(settings.TOOLS_DIR, name))
+    if not candidate.startswith(os.path.abspath(settings.TOOLS_DIR) + os.sep):
         raise ValueError("invalid_path")
     if not os.path.isfile(candidate):
         raise ValueError("not_found")
-    
     return candidate
 
-async def _run_script(path: str, timeout: int = TOOL_TIMEOUT) -> Dict:
+async def _run_script(path: str, timeout: int = settings.TOOL_TIMEOUT) -> Dict:
     proc = await asyncio.create_subprocess_exec(
         "python3", path,
         stdout=asyncio.subprocess.PIPE,
         stderr=asyncio.subprocess.PIPE,
-        cwd=os.path.dirname(path)  # полезно для скриптов
+        cwd=os.path.dirname(path)
     )
     try:
         stdout, stderr = await asyncio.wait_for(proc.communicate(), timeout=timeout)
