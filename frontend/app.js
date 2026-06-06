@@ -12,6 +12,7 @@ const MESSAGES = {
 };
 
 let currentTab = "smoke";
+let editingServerId = null;
 
 const tabToScript = {
   smoke: "smoke-test.py",
@@ -192,7 +193,7 @@ async function tryRestore() {
   }
 }
 
-//сервера.добавить
+//сервера.добавить/редактировать
 async function createServer() {
     const name = el("srv-name").value.trim();
     const host = el("srv-host").value.trim();
@@ -209,19 +210,35 @@ async function createServer() {
         alert("Заполните все поля");
         return;
     }
-    await apiFetch(
-        "/server",
-        "POST",
-        {
-            name,
-            host,
-            ssh_login: login,
-            ssh_password: password,
-            type
-        }
-    );
-    clearServerForm();
-    loadServers();
+    if (editingServerId) {
+  await patchServer({
+    id: editingServerId,
+    name,
+    host,
+    ssh_login,
+    ssh_password,
+    type
+  });
+  editingServerId = null;
+  el("add-server-btn").textContent =
+    "Добавить";
+} else {
+  await apiFetch(
+    "/server",
+    "POST",
+    {
+      name,
+      host,
+      ssh_login,
+      ssh_password,
+      type
+    }
+  );}
+clearServerForm();
+await loadServers();
+el("server-details")
+  .classList
+  .add("hidden");
 }
 const addServerBtn =
   el("add-server-btn");
@@ -233,11 +250,14 @@ if (addServerBtn) {
 }
 //сервера.очистка формы
 function clearServerForm() {
-    el("srv-name").value = "";
-    el("srv-host").value = "";
-    el("srv-login").value = "";
-    el("srv-password").value = "";
-    el("srv-type").value = "";
+  el("srv-name").value = "";
+  el("srv-host").value = "";
+  el("srv-login").value = "";
+  el("srv-password").value = "";
+  el("srv-type").value = "";
+  editingServerId = null;
+  el("add-server-btn").textContent =
+    "Добавить";
 }
 //сервера.загрузить список
 async function loadServers() {
@@ -291,17 +311,39 @@ async function showServer(id) {
         <p>
             Type: ${server.type}
         </p>
-        <button
-            onclick="editServer('${server.id}')" disabled
-        >
-            Редактировать
-        </button>
-        <button
-            onclick="deleteServer('${server.id}')"
-        >
-            Удалить
-        </button>
+        <button onclick="editServer('${server.id}')"> Редактировать </button>
+        <button onclick="deleteServer('${server.id}')"> Удалить </button>
     `;
+}
+async function editServer(id) {
+
+  const server =
+    await getServer(id);
+
+  editingServerId = id;
+
+  el("srv-name").value =
+    server.name;
+
+  el("srv-host").value =
+    server.host;
+
+  el("srv-login").value =
+    server.ssh_login;
+
+  el("srv-password").value =
+    server.ssh_password;
+
+  el("srv-type").value =
+    server.type;
+
+  el("add-server-btn").textContent =
+    "Сохранить";
+
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth"
+  });
 }
 //сервера.удалить
 async function deleteServer(id) {
@@ -318,8 +360,14 @@ async function deleteServer(id) {
         .add("hidden");
     loadServers();
 }
-
-
+//сервера.редактирование
+async function patchServer(data) {
+  return apiFetch(
+    "/server",
+    "PATCH",
+    data
+  );
+}
 
 
 

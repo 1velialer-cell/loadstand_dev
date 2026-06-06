@@ -1,18 +1,1 @@
-[
-  {
-    "id": "3b5b40b3-2cd1-4b18-b0ce-ed97f9a96c05",
-    "name": "test",
-    "host": "0.0.0.0",
-    "ssh_login": "user",
-    "ssh_password": "user",
-    "type": "media"
-  },
-  {
-    "id": "e850e374-4f09-4235-9c79-a3e446d00b55",
-    "name": "loading_test_server",
-    "host": "10.24.64.122",
-    "ssh_login": "root",
-    "ssh_password": "user",
-    "type": "load"
-  }
-]
+[]
