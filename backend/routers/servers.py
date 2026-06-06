@@ -1,7 +1,8 @@
 import json
 from pathlib import Path
 from uuid import uuid4
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, Depends, HTTPException
+from backend.core.sec import get_current_user
 from backend.models.schemas import (
     ServerCreate,
     ServerDelete,
@@ -115,7 +116,7 @@ async def delete_server(
 
 @router.put("")
 async def update_server(
-    payload: ServerUpdate,
+    payload: ServerPatch,
     user: str = Depends(get_current_user)
 ):
     servers = load_servers()
