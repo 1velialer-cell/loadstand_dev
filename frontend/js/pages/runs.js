@@ -8,3 +8,4 @@ export function showRunsPage() {
     el("runs-panel")
         .classList.remove("hidden");
 }
+

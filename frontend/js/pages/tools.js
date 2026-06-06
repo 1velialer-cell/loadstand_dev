@@ -56,17 +56,13 @@ export function initToolsPage() {
     });
 }
 export function showToolPage(toolName) {
-    el("servers-panel")
-        .classList.add("hidden");
-    el("tests-panel")
-        .classList.remove("hidden");
+    el("servers-panel").classList.add("hidden");
+    el("runs-panel").classList.add("hidden");
+    el("tests-panel").classList.remove("hidden");
     el("panel-title").textContent = toolName;
-    el("smoke_button")
-        .classList.toggle("hidden",toolName !== "smoke");
-    el("loading_button")
-        .classList.toggle("hidden",toolName !== "loading");
-    el("stability_button")
-        .classList.toggle("hidden",toolName !== "stability");
+    el("smoke_button").classList.toggle("hidden",toolName !== "smoke");
+    el("loading_button").classList.toggle("hidden",toolName !== "loading");
+    el("stability_button").classList.toggle("hidden",toolName !== "stability");
     document.querySelectorAll(".tab").forEach(tab => {
         tab.classList.toggle("active",tab.dataset.route === `/${toolName}`);
     });

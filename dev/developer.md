@@ -3,135 +3,145 @@
 **Цель:** Упростить и стандартизировать процесс запуска тестовых скриптов через удобный веб-интерфейс с возможностью дальнейшего масштабирования на несколько серверов.
 
 ## Текущий технологический стек
-- **Backend**: FastAPI + Uvicorn
-- Модульная структура backend (`routers`, `services`, `models`, `core`)
-- **Frontend**: Vanilla JavaScript + HTML + CSS (без фреймворков)
-- **Выполнение тестов**: `asyncio.create_subprocess_exec`
-- **Авторизация**: Простая token-based (in-memory)
-- **Язык**: Python 3.10+
-- **Отладка**: Прямой запуск на сервере
+- **Backend**:
+   FastAPI
+   Uvicorn
+   Pydantic
+   AsyncIO
+   Модульная структура (routers, services, models, core)
+**Frontend**
+   Vanilla JavaScript (ES Modules)
+   HTML
+   CSS
+   SPA Router (History API)
+**Выполнение тестов**: `asyncio.create_subprocess_exec`
+**Авторизация**: token-based (in-memory)
+**Язык**: Python 3.10+
+**Отладка**: Прямой запуск на сервере
 
 ## Текущая архитектура
 loadstand/
 ├── main.py
 ├── backend/
-│   ├── core/
-│   │   ├── config.py
-│   │   └── sec.py
-│   ├── models/
-│   │   └── schemas.py
-│   ├── routers/
-│   │   ├── auth.py
-│   │   ├── tools.py
-│   │   ├── logo.py
-│   │   └── servers.py
-│   ├── services/
-│   │   └── tool_executor.py
-│   └── storage.py
+├────── core/
+│      ├── config.py
+│      └── sec.py
+├────── models/
+│      └── schemas.py
+├────── routers/
+│      ├── auth.py
+│      ├── tools.py
+│      ├── logo.py
+│      └── servers.py
+├────── services/
+│      └── tool_executor.py
+├────── storage.py
 ├── frontend/
-│   ├── index.html
-│   ├── app.js
-│   └── styles.css
+├────── index.html
+├────── styles.css
+├────── js/
+│       ├── api/
+│       │   ├── auth.js
+│       │   ├── runs.js
+│       │   ├── servers.js
+│       │   ├── tools.js
+│       │   └── client.js
+│       ├── components/           #пока не используется
+│       │    ├── debug-panel.js
+│       │    ├── loader.js
+│       │    ├── modal.js
+│       │    ├── navbar.js
+│       │    └── debug-panel.js
+│       ├── pages/
+│       │   ├── login.js
+│       │   ├── tools.js
+│       │   ├── servers.js
+│       │   └── runs.js
+│       ├── router/
+│       │   └── router.js
+│       ├── state/               #пока не используется
+│       │   ├── auth.js
+│       │   ├── ui.js
+│       │   └── debug.js
+│       └── app.js
 ├── tools/
 ├── data/
-│   └── servers.json
+│    └── servers.json
 ├── dev/
+│    ├── ai_promt.md
+│    ├── developer.md
+│    └── bugs.txt
 └── README.md
 
-**Как работает:**
-Frontend → REST API (FastAPI) → Tool Executor → subprocess (python3 tools/xxx.py)
+## Текущий принцип работы
+Frontend
+   ↓ 
+REST API
+   ↓
+FastAPI Router
+   ↓
+Service Layer
+   ↓
+Tool Executor
+   ↓
+subprocess (tools/*.py)
 
-## Анализ стека и архитектуры
-### Плюсы:
-- Простота и минимализм
-- Быстрый запуск и разработка
-- FastAPI — современный и производительный
-- Нет тяжёлых зависимостей
-- Хорошая основа для MVP
-### Минусы и проблемы:
-- **Frontend** плоский и содержит дублирование логики
-- **Отсутствует** поддержка удалённых серверов
-- **Нет** логов, истории запусков, реального времени вывода
-- **Авторизация** хранится в памяти (не persistent)
-- **Нет** обработки длинных задач (long-running tasks)
+## **Архитектурные принципы**
+**Backend**
+   API и бизнес-логика не смешиваются.
+   Сложная логика выносится в services.
+   Инструменты запускаются только через whitelist.
+   Исключать command injection.
+   Все изменения учитывать относительно будущей Run System.
+Frontend
+   app.js используется только как bootstrap.
+   API вызовы находятся исключительно в js/api/.
+   Экранная логика находится в js/pages/.
+   Навигация осуществляется через router/router.js.
+   Глобальное состояние хранится в js/state/.
+   Новые страницы добавляются через pages + router.
 
-## Планируемая структура проекта
-/loadstand/
-├── main.py                    # только запуск приложения
-├── config.py                  # настройки, пути, timeouts
-├── requirements.txt
-├── README.md
-├── DEVELOPER.md
-backend/
-├── core/
-│   ├── config.py
-│   ├── security.py
-│   └── logging.py
-├── routers/
-├── services/
-│   ├── tool_executor.py
-│   ├── auth_service.py
-│   └── server_service.py
-├── repositories/
-│   ├── users_repository.py
-│   └── servers_repository.py
-├── models/
-└── tasks/
-frontend/
-├── js/
-│   ├── api.js
-│   ├── auth.js
-│   ├── tabs.js
-│   ├── tools.js
-│   └── servers.js
-├── logo.svg
-├── app.js
-├── styles.css
-└── index.html
-├── tools/
-│   ├── smoke-test.py
-│   ├── load-test.py
-│   └── stability-test.py
-├── dev/                      
-│   ├── ai_promt.md            # промт для ввода ИИ в контекст 
-│   ├── bugs.md                # запись багов для фикса во время dev
-│   └── project.md             # dev-документация
-└── logs/                      
+## Реализовано
+**Backend**:
+   Авторизация
+   Управление серверами
+   Запуск инструментов через subprocess
+   Whitelist инструментов
+   Модульная backend-архитектура
+**Frontend**:
+   Полный рефакторинг frontend
+   Разделение API/UI логики
+   ES Modules
+   SPA Router
+   History API
+   URL-маршруты
+**Поддерживаемые маршруты:**
+   /smoke
+   /loading
+   /stability
+   /servers
+   /runs
+**Подготовлено**
+   API слой для будущей Run System
+   Страница Runs
+   State слой
+   Components слой
+   Router слой
 
 ## Roadmap
-### Технический долг
-#### Backend
-1. `storage.py` хранит пользователей и токены в памяти.
-   - Потеря данных после рестарта.
-   - Не подходит для нескольких экземпляров приложения.
-2. Логика серверов хранится прямо в router.
-   - Функции `read_servers/write_servers` необходимо вынести в сервис.
-3. Нет слоя репозиториев.
-   - Работа с файлами смешана с API.
-4. Нет централизованного логирования.
-5. Нет обработки фоновых задач.
-   - Долгие тесты будут блокировать пользовательские сценарии.
-#### Frontend
-1. `app.js` стал монолитным.
-2. Работа с API, авторизацией, вкладками и серверами смешана.
-3. Нет модульности.
-4. Нет механизма обновления статуса выполнения теста в реальном времени.
-
-## Критичные улучшения
-### Приоритет P1
-- Перевести пользователей и токены в БД.
+### P1
+- Перевести пользователей и токены в БД. Интеграция SQLite
 - Добавить журнал запусков тестов.
 - Добавить логирование.
-- Вынести работу с серверами в service/repository слой.
-### Приоритет P2
+- service/repository слой для работы с серверами
+### P2
 - SSE/WebSocket для онлайн-вывода логов.
 - Очередь задач.
 - Docker Compose.
-- Переезд на микросервисную структуру (`routers/`, `services/`)
 - RBAC (роли пользователей).
-### Приоритет P3
+### P3
 - SSH-запуск тестов на удалённых серверах.
 - Планировщик запусков.
-- Подключение реальных инструментов НТ evi-utils
 - История и отчёты.
-- Поддержка нескольких исполнителей тестов.
+- Поддержка нескольких исполнителей-серверов тестов.
+- Интеграция реальных инструментов НТ evi-utils

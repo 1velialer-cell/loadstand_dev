@@ -87,9 +87,8 @@ export function initServersPage() {
 }
 
 export async function showServersPage() {
-    const testPanel = el("tests-panel");
-    const serversPanel = el("servers-panel");
-    testPanel.classList.add("hidden");
-    serversPanel.classList.remove("hidden");
+    el("tests-panel").classList.add("hidden");
+    el("runs-panel").classList.add("hidden");
+    el("servers-panel").classList.remove("hidden");
     await loadServers();
 }

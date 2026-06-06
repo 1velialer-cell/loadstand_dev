@@ -1,6 +1,7 @@
 import {initLoginPage} from "./pages/login.js";
 import {initToolsPage} from "./pages/tools.js";
 import {initServersPage} from "./pages/servers.js";
+import {showRunsPage} from "./pages/runs.js";
 import {navigate,renderRoute} from "./router/router.js";
 
 function initTabs() {
