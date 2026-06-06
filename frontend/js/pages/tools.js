@@ -1,12 +1,9 @@
-import {
-    runToolApi
-} from "../api/tools.js";
+import {runToolApi} from "../api/tools.js";
 const el = id => document.getElementById(id);
 const MESSAGES = {
     testSuccess: "✅ Тест завершён",
     testFailed: "❌ Тест провален"
 };
-
 const tabToScript = {
     smoke:"smoke-test.py",
     loading:"load-test.py",
@@ -15,18 +12,9 @@ const tabToScript = {
 
 function escapeHtml(text) {
     return String(text)
-        .replace(
-            /&/g,
-            "&amp;"
-        )
-        .replace(
-            /</g,
-            "&lt;"
-        )
-        .replace(
-            />/g,
-            "&gt;"
-        );
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;");
 }
 
 export async function runTool(tabName) {
@@ -35,51 +23,52 @@ export async function runTool(tabName) {
     if (!outputEl) {
         return;
     }
-    outputEl.innerHTML =
-        `<span style="color:#888;">🚀 Запуск ${script}...</span><br><br>`;
-
+    outputEl.innerHTML = `<span style="color:#888;">🚀 Запуск ${script}...</span><br><br>`;
     try {
         const result = await runToolApi(script);
-        let html =
-            `<strong>${MESSAGES.testSuccess}</strong><br><br>`;
+        let html =`<strong>${MESSAGES.testSuccess}</strong><br><br>`;
         if (result.status) {
-            html +=
-                `<strong>Статус:</strong> ${result.status}<br>`;
+            html +=`<strong>Статус:</strong> ${result.status}<br>`;
         }
         if (result.returncode !== undefined) {
-            const color =
-                result.returncode === 0
+            const color = result.returncode === 0
                     ? "#00ff00"
                     : "#ff4444";
-            html +=
-                `<strong>Код возврата:</strong> <span style="color:${color}">${result.returncode}</span><br><br>`;
+            html += `<strong>Код возврата:</strong> <span style="color:${color}">${result.returncode}</span><br><br>`;
         }
         if (result.stdout?.trim()) {
-            html +=
-                `<strong>Вывод:</strong><br><pre>${escapeHtml(result.stdout)}</pre>`;
+            html +=`<strong>Вывод:</strong><br><pre>${escapeHtml(result.stdout)}</pre>`;
         }
-
         if (result.stderr?.trim()) {
-            html +=
-                `<strong>Ошибки:</strong><br><pre>${escapeHtml(result.stderr)}</pre>`;
+            html +=`<strong>Ошибки:</strong><br><pre>${escapeHtml(result.stderr)}</pre>`;
         }
         outputEl.innerHTML = html;
     } catch (err) {
-        outputEl.innerHTML =
-            `<span style="color:red;">${err.message}</span>`;
+        outputEl.innerHTML =`<span style="color:red;">${err.message}</span>`;
     }
 }
 
 export function initToolsPage() {
-    [
-        "smoke",
-        "loading",
-        "stability"
-    ].forEach(name => {
+    ["smoke","loading","stability"].forEach(name => {
         const btn = el(`${name}_button`);
-        if (!btn) {
-            return;
-        }
+        if (!btn) {return;}
         btn.addEventListener("click",() => runTool(name));
     });
 }
+export function showToolPage(toolName) {
+    el("servers-panel")
+        .classList.add("hidden");
+    el("tests-panel")
+        .classList.remove("hidden");
+    el("panel-title").textContent = toolName;
+    el("smoke_button")
+        .classList.toggle("hidden",toolName !== "smoke");
+    el("loading_button")
+        .classList.toggle("hidden",toolName !== "loading");
+    el("stability_button")
+        .classList.toggle("hidden",toolName !== "stability");
+    document.querySelectorAll(".tab").forEach(tab => {
+        tab.classList.toggle("active",tab.dataset.route === `/${toolName}`);
+    });
+}
+

@@ -1,12 +1,4 @@
-import {
-    getMediaServers,
-    getLoadServers,
-    getServer,
-    createServer,
-    updateServer,
-    removeServer
-}
-from "../api/servers.js";
+import {getMediaServers,getLoadServers,getServer,createServer,updateServer,removeServer} from "../api/servers.js";
 const el = id =>document.getElementById(id);
 let editingServerId = null;
 
@@ -63,14 +55,11 @@ async function saveServer() {
         host: el("srv-host").value.trim(),
         ssh_login: el("srv-login").value.trim(),
         ssh_password:el("srv-password").value.trim(),
-        type: el("srv-type").value
-    };
+        type: el("srv-type").value};
     if (editingServerId) {
-        await updateServer({id:editingServerId,...data
-        });
-    } else {
-        await createServer(data);
-    }
+        await updateServer({id:editingServerId,...data});}
+    else {
+        await createServer(data);}
     clearServerForm();
     await loadServers();
 }
@@ -95,4 +84,12 @@ export function initServersPage() {
     if (btn) {btn.addEventListener("click",saveServer);}
     window.editServer = editServer;
     window.deleteServer = deleteServer;
+}
+
+export async function showServersPage() {
+    const testPanel = el("tests-panel");
+    const serversPanel = el("servers-panel");
+    testPanel.classList.add("hidden");
+    serversPanel.classList.remove("hidden");
+    await loadServers();
 }

@@ -8,6 +8,7 @@
 </head>
 <body>
   <div id="root" class="app">
+<!-- авторизация -->
     <div id="login-card" class="card center">
       <h1 class="title">Авторизация</h1>
       <div class="field">
@@ -21,41 +22,39 @@
       </div>
       <div id="login-error" class="error"></div>
     </div>
-
+<!-- header табы -->
     <div id="app-ui" class="hidden">
       <header class="app-header">
         <div class="header-left">
           <img src="/api/logo" alt="Loadstand logo" class="site-logo" />
           <div class="tabs" role="tablist">
-            <button data-tab="smoke" class="tab active">SMOKE</button>
-            <button data-tab="loading" class="tab">LOADING</button>
-            <button data-tab="stability" class="tab">STABILITY</button>
-            <button data-tab="servers" class="tab">SERVERS</button>
+            <button data-route="/smoke" class="tab active">SMOKE</button>
+            <button data-route="/stability" class="tab">STABILITY</button>
+            <button data-route="/loading" class="tab">LOADING</button>
+            <button data-route="/servers" class="tab">SERVERS</button>
           </div>
         </div>
-        
+<!-- header справа -->
         <div class="header-right">
           <span id="user-badge" class="badge">user</span>
           <button id="btn-logout" class="btn ghost">Выход</button>
         </div>
       </header>
-
+<!-- контент на страницах -->
       <main class="page-content">
         <section id="tests-panel" class="panel panel-wide">
           <h2 id="panel-title">smoke</h2>
-
           <div class="control-row">
             <button id="smoke_button" class="btn primary">Запуск</button>
             <button id="loading_button" class="btn primary hidden">Запуск</button>
             <button id="stability_button" class="btn primary hidden">Запуск</button>
           </div>
-
           <div class="output">
             <h3>Вывод</h3>
             <pre id="tool-output" style="white-space: pre-wrap; max-height:400px; overflow:auto;"></pre>
           </div>
         </section>
-        <!-- страница сервера -->
+<!-- страница серверы -->
         <section id="servers-panel" class="panel panel-wide hidden"> 
         <h3>Добавление сервера</h3>
           <input id="srv-name" placeholder="Имя">
@@ -85,7 +84,7 @@
       </main>
     </div>
   </div>
-
+<!-- стяг app.js -->
   <script type="module" src="/static/js/app.js"></script>
 </body>
 </html>

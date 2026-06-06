@@ -1,26 +1,18 @@
-const API_BASE = "";
+const API_BASE = "/api";
 const AUTH_KEY = "ls_token";
 
-export async function apiRequest(
-    method,
-    url,
-    body = null
-) {
+export async function apiRequest(method,url,body = null) {
     const token = localStorage.getItem(AUTH_KEY);
     const headers = {"Content-Type":"application/json"};
     if (token) {
-        headers.Authorization =
-        `Bearer ${token}`;
-    }
-
+        headers.Authorization =`Bearer ${token}`;}
     const response =await fetch(`${API_BASE}${url}`,{
                 method,
                 headers,
                 body: body
                     ? JSON.stringify(body)
                     : null
-            }
-        );
+    });
 
     if (response.status === 401) {
         throw {
@@ -29,11 +21,8 @@ export async function apiRequest(
     }
 
     if (!response.ok) {
-        const text =
-            await response.text();
-        throw new Error(
-            `HTTP ${response.status}: ${text}`
-        );
+        const text = await response.text();
+        throw new Error(`HTTP ${response.status}: ${text}`);
     }
 
     if (response.status === 204) {

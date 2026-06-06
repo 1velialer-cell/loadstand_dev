@@ -17,10 +17,7 @@ export function login(
 
 export function checkSession() {
     return apiRequest(
-        "POST",
-        "/tools/run",
-        {
-            name: "smoke-test.py"
-        }
+        "GET",
+        "/auth/status"
     );
 }

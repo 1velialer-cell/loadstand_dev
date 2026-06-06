@@ -1,7 +1,4 @@
-import {
-    login,
-    checkSession
-} from "../api/auth.js";
+import {login,checkSession} from "../api/auth.js";
 const authKey = "ls_token";
 const el = id => document.getElementById(id);
 const MESSAGES = {
@@ -48,42 +45,27 @@ export async function tryRestore() {
 }
 
 export function initLoginPage() {
-    el("btn-login")
-        .addEventListener(
+    el("btn-login").addEventListener(
             "click",
             async () => {
-                const u =
-                    el("username")
+                const u = el("username")
                         .value
                         .trim();
-                const p =
-                    el("password")
+                const p = el("password")
                         .value
                         .trim();
-                const errEl =
-                    el("login-error");
+                const errEl = el("login-error");
                 errEl.textContent = "";
                 try {
                     const data = await login(u,p);
                     localStorage.setItem(authKey,data.token);
-                    el(
-                        "user-badge"
-                    ).textContent =
-                        u || "user";
+                    el("user-badge").textContent = u || "user";
                     showMain();
                 } catch (err) {
-                    if (
-                        err.message
-                            ?.startsWith(
-                                "HTTP 401"
-                            )
-                    ) {
-                        errEl.textContent =
-                            MESSAGES.loginError;
-                    } else {
-                        errEl.textContent =
-                            MESSAGES.networkError;
-                    }
+                    if (err.message?.startsWith("HTTP 401")) {
+                        errEl.textContent = MESSAGES.loginError;}
+                    else {
+                        errEl.textContent = MESSAGES.networkError;}
                 }
             }
         );
