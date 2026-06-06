@@ -1,6 +1,7 @@
 const API = window.location.origin;
 const authKey = "ls_token";
 const el = id => document.getElementById(id);
+const testPanel = el("tests-panel");
 
 const MESSAGES = {
   loginError: "Неверные учётные данные",
@@ -89,18 +90,43 @@ function escapeHtml(text) {
 
 // ====================== Табы ======================
 document.querySelectorAll(".tab").forEach(tab => {
-  tab.addEventListener("click", () => {
-    document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+  tab.addEventListener("click", async () => {
+    document
+      .querySelectorAll(".tab")
+      .forEach(t => t.classList.remove("active"));
     tab.classList.add("active");
-
     currentTab = tab.dataset.tab;
+    const testPanel =
+      document.querySelector(".panel.panel-wide");
+    const serversPanel =
+      el("servers-panel");
+    if (currentTab === "servers") {
+
+      testPanel.classList.add("hidden");
+      serversPanel.classList.remove("hidden");
+      await loadServers();
+      return;
+    }
+    serversPanel.classList.add("hidden");
+    testPanel.classList.remove("hidden");
+
     el("panel-title").textContent = currentTab;
-
-    el("smoke_button").classList.toggle("hidden", currentTab !== "smoke");
-    el("loading_button").classList.toggle("hidden", currentTab !== "loading");
-    el("stability_button").classList.toggle("hidden", currentTab !== "stability");
-
-    if (el("tool-output")) el("tool-output").innerHTML = "";
+    el("smoke_button")
+      .classList.toggle(
+        "hidden",
+        currentTab !== "smoke"
+      );
+    el("loading_button")
+      .classList.toggle(
+        "hidden",
+        currentTab !== "loading"
+      );
+    el("stability_button")
+      .classList.toggle(
+        "hidden",
+        currentTab !== "stability"
+      );
+    el("tool-output").innerHTML = "";
   });
 });
 
@@ -197,6 +223,14 @@ async function createServer() {
     clearServerForm();
     loadServers();
 }
+const addServerBtn =
+  el("add-server-btn");
+if (addServerBtn) {
+  addServerBtn.addEventListener(
+    "click",
+    createServer
+  );
+}
 //сервера.очистка формы
 function clearServerForm() {
     el("srv-name").value = "";
@@ -258,7 +292,7 @@ async function showServer(id) {
             Type: ${server.type}
         </p>
         <button
-            onclick="editServer('${server.id}')"
+            onclick="editServer('${server.id}')" disabled
         >
             Редактировать
         </button>
@@ -272,13 +306,9 @@ async function showServer(id) {
 //сервера.удалить
 async function deleteServer(id) {
     await apiFetch(
-        "/server",
-        {
-            method: "DELETE",
-            body: JSON.stringify({
-                id
-            })
-        }
+      "/server",
+      "DELETE",
+      { id }
     );
     document
         .getElementById(
