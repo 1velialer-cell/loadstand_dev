@@ -1,6 +1,7 @@
 const API = window.location.origin;
 const authKey = "ls_token";
 const el = id => document.getElementById(id);
+const testPanel = el("tests-panel");
 
 const MESSAGES = {
   loginError: "Неверные учётные данные",
@@ -89,18 +90,43 @@ function escapeHtml(text) {
 
 // ====================== Табы ======================
 document.querySelectorAll(".tab").forEach(tab => {
-  tab.addEventListener("click", () => {
-    document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+  tab.addEventListener("click", async () => {
+    document
+      .querySelectorAll(".tab")
+      .forEach(t => t.classList.remove("active"));
     tab.classList.add("active");
-
     currentTab = tab.dataset.tab;
+    const testPanel =
+      document.querySelector(".panel.panel-wide");
+    const serversPanel =
+      el("servers-panel");
+    if (currentTab === "servers") {
+
+      testPanel.classList.add("hidden");
+      serversPanel.classList.remove("hidden");
+      await loadServers();
+      return;
+    }
+    serversPanel.classList.add("hidden");
+    testPanel.classList.remove("hidden");
+
     el("panel-title").textContent = currentTab;
-
-    el("smoke_button").classList.toggle("hidden", currentTab !== "smoke");
-    el("loading_button").classList.toggle("hidden", currentTab !== "loading");
-    el("stability_button").classList.toggle("hidden", currentTab !== "stability");
-
-    if (el("tool-output")) el("tool-output").innerHTML = "";
+    el("smoke_button")
+      .classList.toggle(
+        "hidden",
+        currentTab !== "smoke"
+      );
+    el("loading_button")
+      .classList.toggle(
+        "hidden",
+        currentTab !== "loading"
+      );
+    el("stability_button")
+      .classList.toggle(
+        "hidden",
+        currentTab !== "stability"
+      );
+    el("tool-output").innerHTML = "";
   });
 });
 
@@ -165,6 +191,137 @@ async function tryRestore() {
     showLogin();
   }
 }
+
+//сервера.добавить
+async function createServer() {
+    const name = el("srv-name").value.trim();
+    const host = el("srv-host").value.trim();
+    const login = el("srv-login").value.trim();
+    const password = el("srv-password").value.trim();
+    const type = el("srv-type").value;
+    if (
+        !name ||
+        !host ||
+        !login ||
+        !password ||
+        !type
+    ) {
+        alert("Заполните все поля");
+        return;
+    }
+    await apiFetch(
+        "/server",
+        "POST",
+        {
+            name,
+            host,
+            ssh_login: login,
+            ssh_password: password,
+            type
+        }
+    );
+    clearServerForm();
+    loadServers();
+}
+const addServerBtn =
+  el("add-server-btn");
+if (addServerBtn) {
+  addServerBtn.addEventListener(
+    "click",
+    createServer
+  );
+}
+//сервера.очистка формы
+function clearServerForm() {
+    el("srv-name").value = "";
+    el("srv-host").value = "";
+    el("srv-login").value = "";
+    el("srv-password").value = "";
+    el("srv-type").value = "";
+}
+//сервера.загрузить список
+async function loadServers() {
+    const media =
+        await apiFetch("/server/media");
+    const load =
+        await apiFetch("/server/load");
+    renderServerList(
+        "media-list",
+        media
+    );
+    renderServerList(
+        "load-list",
+        load
+    );
+}
+//сервера.рендер
+function renderServerList(
+    containerId,
+    servers) {
+    const container = el(containerId);
+    container.innerHTML = "";
+    servers.forEach(server => {
+        const item =
+            document.createElement("div");
+        item.className = "server-item";
+        item.textContent =
+            server.name;
+        item.onclick =
+            () => showServer(server.id);
+        container.appendChild(item);
+    });}
+//сервера.показать
+async function showServer(id) {
+    const server =
+        await apiFetch(
+            `/server?id=${id}`);
+    const panel =
+        document.getElementById(
+            "server-details");
+    panel.classList.remove(
+        "hidden");
+    panel.innerHTML = `
+        <h3>${server.name}</h3>
+        <p>
+            Host: ${server.host}
+        </p>
+        <p>
+            Login: ${server.ssh_login}
+        </p>
+        <p>
+            Type: ${server.type}
+        </p>
+        <button
+            onclick="editServer('${server.id}')" disabled
+        >
+            Редактировать
+        </button>
+        <button
+            onclick="deleteServer('${server.id}')"
+        >
+            Удалить
+        </button>
+    `;
+}
+//сервера.удалить
+async function deleteServer(id) {
+    await apiFetch(
+      "/server",
+      "DELETE",
+      { id }
+    );
+    document
+        .getElementById(
+            "server-details"
+        )
+        .classList
+        .add("hidden");
+    loadServers();
+}
+
+
+
+
 
 // Инициализация
 tryRestore();
