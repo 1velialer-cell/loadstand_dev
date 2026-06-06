@@ -36,4 +36,4 @@ class ServerPatch(BaseModel):
     host: str | None = None
     ssh_login: str | None = None
     ssh_password: str | None = None
-    type: Literal["media", "load"] | None = None
+    type: Literal["media","load"] | None = None

@@ -1,0 +1,1 @@
+export const authState = {token: null, username: null}

@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 from backend.models.schemas import Creds
 from backend.storage import USERS, TOKENS
 import secrets
@@ -26,3 +26,7 @@ def login(creds: Creds):
         "expires_in": settings.TOKEN_LIFETIME,
         "user": u
     }
+
+@router.get("/status")
+async def auth_status():
+    return {"status": "OK"}

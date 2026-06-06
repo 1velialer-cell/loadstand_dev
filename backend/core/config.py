@@ -10,7 +10,6 @@ class Settings:
     ROOT = PROJECT_ROOT
     TOOLS_DIR = PROJECT_ROOT / "tools"
     FRONTEND_DIR = PROJECT_ROOT / "frontend"
-    LOGS_DIR = PROJECT_ROOT / "logs"
     LOGO_PATH = PROJECT_ROOT / "logo.svg"
     
     HOST = os.getenv("HOST", "0.0.0.0")

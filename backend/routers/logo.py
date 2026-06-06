@@ -2,7 +2,7 @@ from fastapi import APIRouter
 from fastapi.responses import FileResponse
 from backend.core.config import settings
 
-router = APIRouter(prefix="/api", tags=["static"])
+router = APIRouter(tags=["static"])
 
 @router.get("/logo")
 async def get_logo():

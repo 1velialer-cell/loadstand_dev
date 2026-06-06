@@ -8,10 +8,6 @@ __pycache__/
 *.pyo
 *.pyd
 
-# Логи
-logs/
-*.log
-
 # IDE и редакторы
 .vscode/
 .idea/
@@ -29,6 +25,5 @@ ENV/
 .DS_Store
 Thumbs.db
 
-# Тестовые данные (если будут)
-*.tmp
-test-results/
+# DEV
+dev/

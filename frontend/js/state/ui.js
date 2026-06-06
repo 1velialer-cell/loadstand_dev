@@ -1,0 +1,1 @@
+export const uiState = {currentPage: null, debugEnabled: true};
