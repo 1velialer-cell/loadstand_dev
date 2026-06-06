@@ -1,4 +1,24 @@
-const API = window.location.origin;
+import {
+    login,
+    checkSession
+}
+from "./api/auth.js";
+
+import {
+    runToolApi
+}
+from "./api/tools.js";
+
+import {
+    getMediaServers,
+    getLoadServers,
+    getServer,
+    createServer,
+    updateServer,
+    removeServer
+}
+from "./api/servers.js";
+
 const authKey = "ls_token";
 const el = id => document.getElementById(id);
 const testPanel = el("tests-panel");
@@ -20,27 +40,6 @@ const tabToScript = {
   stability: "stability-test.py"
 };
 
-// ====================== API Helper ======================
-async function apiFetch(endpoint, method = "GET", body = null) {
-  const token = localStorage.getItem(authKey);
-  const headers = { "Content-Type": "application/json" };
-  if (token) headers["Authorization"] = `Bearer ${token}`;
-
-  const options = { method, headers };
-  if (body) options.body = JSON.stringify(body);
-
-  const response = await fetch(API + endpoint, options);
-
-  if (response.status === 401) {
-    throw { unauthorized: true };
-  }
-  if (!response.ok) {
-    const errorText = await response.text().catch(() => "");
-    throw new Error(`HTTP ${response.status}: ${errorText}`);
-  }
-  return response.json();
-}
-
 // ====================== Запуск теста ======================
 async function runTool(tabName) {
   const script = tabToScript[tabName];
@@ -52,7 +51,7 @@ async function runTool(tabName) {
   outputEl.scrollTop = outputEl.scrollHeight;
 
   try {
-    const result = await apiFetch("/tools/run", "POST", { name: script });
+    const result = await runToolApi(script);
 
     let html = `<strong>${MESSAGES.testSuccess}</strong><br><br>`;
 
@@ -143,25 +142,17 @@ el("btn-login").addEventListener("click", async () => {
   const p = el("password").value.trim();
   const errEl = el("login-error");
   errEl.textContent = "";
-
   try {
-    const r = await fetch(API + "/auth/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username: u, password: p })
-    });
-
-    if (!r.ok) {
-      errEl.textContent = MESSAGES.loginError;
-      return;
-    }
-
-    const data = await r.json();
-    localStorage.setItem(authKey, data.token);
+    const data = await login(u, p);
+    localStorage.setItem(authKey,data.token);
     el("user-badge").textContent = u || "user";
     showMain();
   } catch (err) {
-    errEl.textContent = MESSAGES.networkError;
+    if (err.message?.includes("401")) {
+      errEl.textContent = MESSAGES.loginError;
+    } else {
+      errEl.textContent = MESSAGES.networkError;}
+    console.error(err);
   }
 });
 
@@ -183,9 +174,8 @@ function logout() {
 async function tryRestore() {
   const token = localStorage.getItem(authKey);
   if (!token) { showLogin(); return; }
-
   try {
-    await apiFetch("/tools/run", "POST", { name: "smoke-test.py" }); // можно сделать отдельный /status позже
+    await checkSession();
     showMain();
   } catch (e) {
     localStorage.removeItem(authKey);
@@ -194,7 +184,7 @@ async function tryRestore() {
 }
 
 //сервера.добавить/редактировать
-async function createServer() {
+async function saveServer() {
     const name = el("srv-name").value.trim();
     const host = el("srv-host").value.trim();
     const ssh_login = el("srv-login").value.trim();
@@ -211,7 +201,7 @@ async function createServer() {
         return;
     }
     if (editingServerId) {
-  await patchServer({
+  await updateServer({
     id: editingServerId,
     name,
     host,
@@ -223,17 +213,20 @@ async function createServer() {
   el("add-server-btn").textContent =
     "Добавить";
 } else {
-  await apiFetch(
-    "/server",
-    "POST",
-    {
-      name,
-      host,
-      ssh_login,
-      ssh_password,
-      type
-    }
-  );}
+  await createServer({
+    name,
+    host,
+    ssh_login,
+    ssh_password,
+    type
+  });
+}
+addServerBtn.addEventListener(
+    "click",
+    saveServer
+);
+window.editServer = editServer;
+window.deleteServer = deleteServer;
 clearServerForm();
 await loadServers();
 el("server-details")
@@ -261,10 +254,8 @@ function clearServerForm() {
 }
 //сервера.загрузить список
 async function loadServers() {
-    const media =
-        await apiFetch("/server/media");
-    const load =
-        await apiFetch("/server/load");
+    const media = await getMediaServers();
+    const load = await getLoadServers();
     renderServerList(
         "media-list",
         media
@@ -292,9 +283,7 @@ function renderServerList(
     });}
 //сервера.показать
 async function showServer(id) {
-    const server =
-        await apiFetch(
-            `/server?id=${id}`);
+    const server = await getServer(id);
     const panel =
         document.getElementById(
             "server-details");
@@ -347,11 +336,7 @@ async function editServer(id) {
 }
 //сервера.удалить
 async function deleteServer(id) {
-    await apiFetch(
-      "/server",
-      "DELETE",
-      { id }
-    );
+    await removeServer(id);
     document
         .getElementById(
             "server-details"
@@ -360,16 +345,6 @@ async function deleteServer(id) {
         .add("hidden");
     loadServers();
 }
-//сервера.редактирование
-async function patchServer(data) {
-  return apiFetch(
-    "/server",
-    "PATCH",
-    data
-  );
-}
-
-
 
 // Инициализация
 tryRestore();
