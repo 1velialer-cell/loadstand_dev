@@ -13,21 +13,25 @@ export async function apiRequest(method,url,body = null) {
                     ? JSON.stringify(body)
                     : null
     });
-
     if (response.status === 401) {
         throw {
             unauthorized: true
         };
     }
-
     if (!response.ok) {
         const text = await response.text();
         throw new Error(`HTTP ${response.status}: ${text}`);
     }
-
     if (response.status === 204) {
         return null;
     }
-
+    if (DEBUG) {
+    apiCalls.unshift({
+        method,
+        url,
+        status: response.status,
+        time: new Date()
+    });
+    }
     return response.json();
 }
