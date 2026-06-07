@@ -24,7 +24,3 @@ ENV/
 # ОС
 .DS_Store
 Thumbs.db
-
-# DEV
-.dev/
-dev/
