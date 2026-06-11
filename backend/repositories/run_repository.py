@@ -15,3 +15,8 @@ class RunRepository:
         return self.db.query(TestRun).all()
     def save(self):
         self.db.commit()
+    def update(self, run):
+        self.db.add(run)
+        self.db.commit()
+        self.db.refresh(run)
+        return run

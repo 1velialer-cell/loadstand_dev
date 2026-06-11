@@ -61,3 +61,10 @@ class RunResultResponse(BaseModel):
     stdout: str
     stderr: str
     duration_sec: float
+
+class RunRead(BaseModel):
+    id: str
+    tool_name: str
+    status: str
+    class Config:
+        from_attributes = True

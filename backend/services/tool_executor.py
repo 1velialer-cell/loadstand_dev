@@ -40,15 +40,15 @@ async def run_tool(name: str):
         proc.kill()
         await proc.communicate()
         return {
-            "status": "timeout",
-            "stdout": "",
-            "stderr": "Выполнение превысило лимит времени",
-            "returncode": -1
+            "return_code": ...,
+            "stdout": ...,
+            "stderr": ...,
+            "duration_sec": ...
         }
 
     return {
-        "status": "success" if proc.returncode == 0 else "error",
-        "returncode": proc.returncode,
-        "stdout": stdout.decode("utf-8", errors="ignore"),
-        "stderr": stderr.decode("utf-8", errors="ignore"),
+        "return_code": ...,
+        "stdout": ...,
+        "stderr": ...,
+        "duration_sec": ...
     }

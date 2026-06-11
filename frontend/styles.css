@@ -178,16 +178,47 @@ input[type=range]::-webkit-slider-thumb,input[type=range]::-moz-range-thumb{widt
   width: 100%;
   padding: 10px;
   margin-bottom: 12px;
-
   background: var(--panel);
-
   color: var(--text);
-
   border: 1px solid var(--border);
-
   border-radius: 8px;
 }
 
 #server-details {
   margin-top: 24px;
+}
+
+/* runs_style */
+.runs-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+.runs-table th {
+    text-align: left;
+    padding: 12px;
+    background: #1f2937;
+}
+.runs-table td {
+    padding: 12px;
+    border-bottom: 1px solid #2d3748;
+}
+.runs-table tbody tr:hover {
+    background: rgba(255,255,255,0.04);
+}
+.status-finished {
+    color: #22c55e;
+    font-weight: 600;
+}
+.status-failed {
+    color: #ef4444;
+    font-weight: 600;
+}
+.status-created {
+    color: #f59e0b;
+    font-weight: 600;
+}
+.result-btn {
+    cursor: pointer;
+    padding: 6px 12px;
 }
