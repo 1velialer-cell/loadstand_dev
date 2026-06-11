@@ -1,13 +1,17 @@
 import { apiRequest } from "./client.js";
 
-export async function getRuns(token) {
-    return apiRequest("GET","/runs",null,token);
+export function createRun(payload) {
+    return apiRequest("POST","/runs",payload);
 }
 
-export async function getRun(token,runId) {
-    return apiRequest("GET",`/runs/${runId}`,null,token);
+export function getRuns() {
+    return apiRequest("GET","/runs");
 }
 
-export async function createRun(token,payload) {
-    return apiRequest("POST","/runs",payload,token);
+export function getRun(runId) {
+    return apiRequest("GET",`/runs/${runId}`);
+}
+
+export function getRunResult(runId) {
+    return apiRequest("GET",`/runs/${runId}/result`);
 }

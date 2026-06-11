@@ -1,4 +1,4 @@
-import {runToolApi} from "../api/tools.js";
+import {createRun,getRunResult} from "../api/runs.js";
 const el = id => document.getElementById(id);
 const MESSAGES = {
     testSuccess: "✅ Тест завершён",
@@ -25,16 +25,17 @@ export async function runTool(tabName) {
     }
     outputEl.innerHTML = `<span style="color:#888;">🚀 Запуск ${script}...</span><br><br>`;
     try {
-        const result = await runToolApi(script);
+        const run = await createRun({tool_name: script});
+        const result = await getRunResult(run.id);
         let html =`<strong>${MESSAGES.testSuccess}</strong><br><br>`;
         if (result.status) {
             html +=`<strong>Статус:</strong> ${result.status}<br>`;
         }
-        if (result.returncode !== undefined) {
-            const color = result.returncode === 0
+        if (result.return_code !== undefined) {
+            const color = result.return_code === 0
                     ? "#00ff00"
                     : "#ff4444";
-            html += `<strong>Код возврата:</strong> <span style="color:${color}">${result.returncode}</span><br><br>`;
+            html += `<strong>Код возврата:</strong> <span style="color:${color}">${result.return_code}</span><br><br>`;
         }
         if (result.stdout?.trim()) {
             html +=`<strong>Вывод:</strong><br><pre>${escapeHtml(result.stdout)}</pre>`;
@@ -56,6 +57,8 @@ export function initToolsPage() {
     });
 }
 export function showToolPage(toolName) {
+    const outputEl = el("tool-output");
+    if (outputEl) {outputEl.innerHTML = "";}
     el("servers-panel").classList.add("hidden");
     el("runs-panel").classList.add("hidden");
     el("tests-panel").classList.remove("hidden");
