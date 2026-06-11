@@ -1,4 +1,4 @@
 USERS = {
-    "nik": {"password": "nik"}
+    "user": {"password": "user"}
 }
 TOKENS = {}

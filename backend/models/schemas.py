@@ -2,13 +2,14 @@ from pydantic import BaseModel
 from typing import Optional, Dict, Any
 from uuid import UUID
 from typing import Literal
+from enum import Enum
 
 class Creds(BaseModel):
     username: str
     password: str
 
 class ToolRunRequest(BaseModel):
-    name: str
+    tool_name: str
 
 class ToolResult(BaseModel):
     status: str
@@ -37,3 +38,26 @@ class ServerPatch(BaseModel):
     ssh_login: str | None = None
     ssh_password: str | None = None
     type: Literal["media","load"] | None = None
+
+class RunStatus(str, Enum):
+    CREATED = "CREATED"
+    PREPARING = "PREPARING"
+    RUNNING = "RUNNING"
+    STOPPING = "STOPPING"
+    FINISHED = "FINISHED"
+    FAILED = "FAILED"
+
+class RunCreate(BaseModel):
+    tool_name: str
+
+class RunResponse(BaseModel):
+    id: str
+    tool_name: str
+    status: RunStatus
+
+class RunResultResponse(BaseModel):
+    run_id: str
+    return_code: int
+    stdout: str
+    stderr: str
+    duration_sec: float
