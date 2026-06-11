@@ -1,8 +1,7 @@
 # Roadmap LoadStand
-
 ## Этап 1. Run System
 Цель: Перейти от запуска инструментов к полноценным тестовым запускам.
-Реализовать:
+Реализовано:
 * TestRun
 * RunStatus
 * RunResult
@@ -11,16 +10,30 @@
 * Alembic
 * хранение запусков
 * хранение результатов
-Результат: Tool → Run → Result
-Статус: IN PROGRESS
+* история запусков
+* отображение результатов в Web UI
+Результат:
+Tool → Run → Result
+Статус: COMPLETED
 ---
 
-## Этап 2. Live Logs
+## Этап 2. Node Manager
+Цель: Ввести доменную сущность Node.
 Реализовать:
-* WebSocket или SSE
-* потоковую передачу логов
-* отображение статуса выполнения
-* уведомления о завершении
+* Node
+* NodeRole
+* NodeRepository
+* NodeService
+* PostgreSQL хранение узлов
+* перенос Servers из JSON в PostgreSQL
+* проверку доступности узлов
+* Last Seen
+* состояние узла
+Поддерживаемые роли:
+* MEDIA_SERVER
+* LOAD_SERVER
+Результат:
+Node→ Run
 Статус: PLANNED
 ---
 
@@ -28,31 +41,39 @@
 Реализовать:
 * AsyncSSH
 * SSH Connection Pool
-* запуск процессов на удаленных серверах
+* удаленное выполнение команд
 * остановку процессов
-* получение логов
-Результат: Run → SSH Executor → Remote Server
+* получение stdout/stderr
+* проверку доступности узлов
+Результат:
+Run
+→ SSH Executor
+→ Node
 Статус: PLANNED
 ---
 
-## Этап 4. Node Manager
+## Этап 4. Live Logs
 Реализовать:
-* регистрацию узлов
-* роли серверов
-* хранение конфигурации
-* проверку доступности
-Поддерживаемые роли:
-* MEDIA_SERVER
-* LOAD_SERVER
+* WebSocket
+* потоковую передачу логов
+* отображение статуса выполнения
+* отображение прогресса запуска
+* уведомления о завершении
+Результат:
+Run
+→ Live Logs
+→ Web UI
 Статус: PLANNED
 ---
 
 ## Этап 5. Scenario Engine
 Реализовать:
-* сценарии испытаний
-* шаги сценариев
-* параметры сценариев
+* Scenario
+* ScenarioStep
+* ScenarioParameter
+* выполнение сценариев
 * условия выполнения
+* повторное использование сценариев
 Типовой сценарий:
 Подготовка
 ↓
@@ -65,21 +86,38 @@
 Сбор результатов
 ↓
 Отчет
+Результат:
+Scenario
+→ Run
 Статус: PLANNED
 ---
 
 ## Этап 6. Metrics Manager
-Реализовать сбор:
+Реализовать сбор метрик.
 Infrastructure:
 * CPU
 * RAM
-* Disk
-* Network
+* Disk Usage
+* Disk IO
+* Network IO
+* Load Average
 Video:
 * FPS
 * Bitrate
 * Streams
 * Frame Loss
+* Reconnects
+Service:
+* Active Streams
+* Camera Count
+* Processing Queues
+Archive:
+* Write Speed
+* Queue Size
+* Disk Space
+Результат:
+Run
+→ Metrics
 Статус: PLANNED
 ---
 
@@ -87,7 +125,12 @@ Video:
 Реализовать:
 * TimescaleDB или VictoriaMetrics
 * хранение временных рядов
-* сравнение тестовых запусков
+* сравнение запусков
+* агрегирование данных
+* долгосрочное хранение
+Результат:
+Metrics
+→ History
 Статус: PLANNED
 ---
 
@@ -98,19 +141,40 @@ Video:
 * PASS
 * WARNING
 * FAIL
+* автоматическую оценку результатов
+Результат:
+Metrics
+→ Result
 Статус: PLANNED
 ---
 
 ## Этап 9. Alert Manager
 Реализовать:
+* Event
+* Alert
 * правила обнаружения инцидентов
 * Telegram уведомления
 * Email уведомления
 * журнал событий
+Результат:
+Result
+→ Alert
 Статус: PLANNED
 ---
 
-## Этап 10. Production Ready
+## Этап 10. Reports
+Реализовать:
+* Report
+* генерацию отчетов
+* HTML отчеты
+* PDF отчеты
+* экспорт результатов
+* сравнительные отчеты
+Результат:
+Run → Report
+Статус: PLANNED
+---
+## Этап 11. Production Ready
 Реализовать:
 * Docker Compose
 * Nginx
@@ -120,6 +184,5 @@ Video:
 * резервное копирование
 * Grafana
 * Prometheus
+* CI/CD
 Статус: PLANNED
- 
- 

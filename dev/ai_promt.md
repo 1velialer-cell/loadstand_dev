@@ -19,41 +19,52 @@ RTSP Generator
 ---
 
 # Текущее состояние проекта
-Проект находится на стадии MVP.
+Проект завершил этап Run System.
 Реализовано:
 Backend:
-* FastAPI
-* Pydantic
-* AsyncIO
-* Token Authentication
-* запуск инструментов через subprocess
-* whitelist разрешенных инструментов
-* модульная архитектура Router → Service
+  FastAPI
+  Pydantic
+  AsyncIO
+  PostgreSQL
+  SQLAlchemy
+  Alembic
+  Repository Layer
+  RunService
+  RunRepository
+  RunResultRepository
+  Token Authentication
+  запуск инструментов через subprocess
+  whitelist разрешенных инструментов
 Frontend:
-* Vanilla JS (ES Modules)
-* SPA Router
-* History API
-* страницы:
-  * Smoke
-  * Loading
-  * Stability
-  * Servers
-  * Runs
+  Vanilla JS (ES Modules)
+  SPA Router
+  History API
+Страницы:
+  Smoke
+  Loading
+  Stability
+  Servers
+  Runs
+Run System:
+  TestRun
+  RunStatus
+  RunResult
+  хранение запусков
+  хранение результатов
+  история запусков
+  отображение результатов
 Отсутствует:
-* PostgreSQL
-* SQLAlchemy
-* Alembic
-* история запусков
-* SSH Executor
-* Node Manager
-* Scenario Engine
-* Metrics Manager
-* Result Analyzer
-* Alert Manager
-* Live Logs
-* система отчетности
-
-На текущем этапе система фактически выполняет роль интерфейса запуска тестовых инструментов.
+  SSH Executor
+  Node Manager
+  Scenario Engine
+  Metrics Manager
+  Result Analyzer
+  Alert Manager
+  Reports
+  Live Logs
+На текущем этапе система реализует полноценную модель тестовых запусков:
+Tool → TestRun → RunResult
+Все запуски и результаты сохраняются в PostgreSQL.
 ---
 
 # Целевая архитектура
@@ -204,11 +215,16 @@ app.js - только bootstrap
 Главная бизнес-модель системы:
 Node
 → Scenario
-→ Run
+→ TestRun
 → Metrics
 → Result
 → Alert
-Любая новая функциональность должна проектироваться относительно этой цепочки.
+→ Report
+Текущая реализованная часть модели:
+Tool
+→ TestRun
+→ RunResult
+Любая новая функциональность должна проектироваться относительно полной целевой цепочки.
 ---
 
 # Правила принятия решений
@@ -223,7 +239,97 @@ Node
 * SSH Executor
 * масштабирование системы
 Если решение создает технический долг относительно целевой архитектуры — необходимо явно указать это до реализации.
+
+# Правило реализации функциональности
+Каждый этап roadmap должен реализовываться сквозным образом.
+Обязательно проектировать одновременно:
+* Backend
+* API
+* Frontend
+* UI
+Функциональность не считается завершенной, если реализован только Backend.
+Минимальный критерий завершения этапа:
+Backend:
+* модели
+* сервисы
+* репозитории
+* API
+Frontend:
+* API слой
+* страницы
+* состояние приложения
+* UI компоненты
+UI:
+* отображение данных
+* взаимодействие пользователя
+* обработка ошибок
+* обновление состояния
+Любая новая сущность должна проходить полный путь:
+Database
+→ Repository
+→ Service
+→ Router
+→ API
+→ Frontend API
+→ Page
+→ UI
+Например:
+Node
+→ NodeRepository
+→ NodeService
+→ NodesRouter
+→ /api/nodes
+→ frontend/api/nodes.js
+→ frontend/pages/nodes.js
+→ UI Nodes Page
+Scenario
+→ ScenarioRepository
+→ ScenarioService
+→ ScenariosRouter
+→ /api/scenarios
+→ frontend/api/scenarios.js
+→ frontend/pages/scenarios.js
+→ UI Scenarios Page
+Metrics
+→ MetricRepository
+→ MetricsService
+→ MetricsRouter
+→ /api/metrics
+→ frontend/api/metrics.js
+→ frontend/pages/metrics.js
+→ UI Metrics Dashboard
+Запрещено считать этап выполненным, если данные доступны только через API или только через БД.
+Результат каждой реализации должен быть доступен пользователю через Web UI.
+Run System считается завершенным.
+Запрещено проектировать новую функциональность через прямой вызов Tool Executor из Router.
+Все новые механизмы запуска должны строиться через:
+TestRun
+→ Service
+→ Executor
+а не через:
+Router
+→ Subprocess
+Любое решение должно учитывать будущий переход к:
+Node
+→ SSH Executor
+→ Scenario Engine
+Текущий технический долг:
+Tool API все еще существует параллельно с Run API.
+Run выполняется синхронно внутри HTTP запроса.
+Live Logs отсутствуют.
+Node Manager отсутствует.
+SSH Executor отсутствует.
+Указанные ограничения необходимо учитывать при проектировании новых модулей.
 ---
+
+# Правило завершения этапов
+Этап roadmap считается завершенным только если выполнены все уровни:
+1. Data Layer
+2. Business Layer
+3. API Layer
+4. Frontend Layer
+5. UI Layer
+Если отсутствует хотя бы один уровень, этап имеет статус IN PROGRESS.
 
 # Технологический стек
 Backend:
@@ -316,23 +422,24 @@ frontend/js/app.js - Только bootstrap приложения.
 loadstand/
 ├── backend/
 ├── core/
+├── db/
 ├── models/
 ├── routers/
-│   ├── auth.py
-│   ├── nodes.py
-│   ├── scenarios.py
-│   ├── runs.py
-│   ├── metrics.py
-│   ├── alerts.py
-│   └── reports.py
+│ ├── auth.py
+│ ├── runs.py
+│ ├── nodes.py
+│ ├── scenarios.py
+│ ├── metrics.py
+│ ├── alerts.py
+│ └── reports.py
 ├── services/
-│   ├── node_manager/
-│   ├── scenario_engine/
-│   ├── test_orchestrator/
-│   ├── metrics_manager/
-│   ├── result_analyzer/
-│   ├── alert_manager/
-│   └── ssh_executor/
+│ ├── run_service.py
+│ ├── node_manager/
+│ ├── ssh_executor/
+│ ├── scenario_engine/
+│ ├── metrics_manager/
+│ ├── result_analyzer/
+│ └── alert_manager/
 ├── repositories/
 │   ├── node_repository.py
 │   ├── scenario_repository.py
@@ -361,25 +468,3 @@ loadstand/
 ├── state/
 └── components/
 
-# Слои ответственности целевой архитектуры проекта
-MVP Architecture
-Tool
-→ Subprocess
-→ Result
-Target Architecture
-Node
-→ Scenario
-→ TestRun
-→ Metrics
-→ Result Analysis
-→ Alerting
-Любые новые изменения должны приближать проект к Target Architecture.
-Запрещено принимать решения, которые усложняют переход к:
-* PostgreSQL
-* SSH Executor
-* Node Manager
-* Scenario Engine
-* Metrics Manager
-* Result Analyzer
-* Alert Manager
-* Historical Metrics Storage
