@@ -1,8 +1,7 @@
 # LoadStand
-## 1. Назначение проекта
-
-LoadStand — платформа автоматизированного нагрузочного тестирования систем видеонаблюдения.
-Основная целевая цепочка:
+## Назначение проекта
+LoadStand — платформа автоматизированного тестирования систем видеонаблюдения.
+Основная бизнес-модель:
 Node
 → Scenario
 → TestRun
@@ -12,153 +11,88 @@ Node
 → Report
 
 Система должна обеспечивать:
-- управление инфраструктурными узлами;
-- выполнение тестовых сценариев;
-- запуск и контроль нагрузочных тестов;
-- мониторинг инфраструктуры;
-- мониторинг видеосервисов;
-- сбор и хранение метрик;
-- анализ результатов;
-- обнаружение инцидентов;
-- формирование отчетов.
+* управление серверами;
+* удаленное выполнение тестов;
+* генерацию видеонагрузки;
+* генерацию API нагрузки;
+* мониторинг инфраструктуры;
+* мониторинг видеосервиса;
+* анализ результатов;
+* обнаружение инцидентов;
+* формирование отчетов.
 
 ---
 
-# 2. Текущее состояние проекта
-## Стек
-### Backend
-- FastAPI
-- Pydantic v2
-- SQLAlchemy 2.x
-- PostgreSQL
-- Alembic
-- AsyncIO
+# Текущее состояние проекта
+## Backend
+* FastAPI
+* Pydantic v2
+* SQLAlchemy 2.x
+* PostgreSQL
+* Alembic
+* Repository Pattern
+Реализовано:
+* Run System
+* Node Manager
+* Auth API
+* Runs API
+* Nodes API
 
-### Frontend
-- Vanilla JS (ES Modules)
-- SPA Router
-- History API
-- HTML
-- CSS
+---
 
-## Реализовано
-### Run System
-- TestRun
-- RunStatus
-- RunResult
-- хранение запусков
-- хранение результатов
-- история запусков
-- отображение результатов
-### Node Manager
-- Node
-- NodeRole
-- NodeStatus
-- NodeRepository
-- NodeService
-- PostgreSQL хранение узлов
-- CRUD API
-- Web UI управления узлами
-- проверка доступности узлов
-- Last Seen
-- состояние узлов
-### API
-- Auth API
-- Runs API
-- Nodes API
-
-### Frontend
+## Frontend
+* Vanilla JS
+* SPA Router
+* History API
 Страницы:
-- Smoke
-- Loading
-- Stability
-- Runs
-- Nodes
-## Текущая бизнес-модель
-Tool
-→ TestRun
-→ RunResult
-Node
-→ TestRun
----
-
-# 3. Текущая архитектура проекта
-## Backend
-Router → Service → Repository → PostgreSQL
-### Ответственность слоев
-#### Router
-Только HTTP:
-- request
-- response
-- validation
-- dependency injection
-
-#### Service
-Бизнес-логика:
-- правила системы
-- orchestration
-- проверки
-
-#### Repository
-Работа с БД:
-- CRUD
-- запросы
-- выборки
-
-#### Database
-Хранение данных.
+* Smoke
+* Loading
+* Stability
+* Runs
+* Nodes
 
 ---
 
-## Frontend
-api/
-→ pages/
-→ components/
-→ router/
-
-### Ответственность
-#### api/
-Только работа с backend API.
-#### pages/
-Экранная логика.
-#### components/
-Переиспользуемые UI-компоненты.
-#### router/
-SPA маршрутизация.
-#### app.js
-Только bootstrap приложения.
+# Текущая архитектура
+Backend:
+Router
+* Service
+* Repository
+* PostgreSQL
+Frontend:
+API
+* Page
+* Component
+* UI
 
 ---
 
-# 4. Целевой стек
-## Backend
-- FastAPI
-- Pydantic
-- SQLAlchemy
-- PostgreSQL
-- Alembic
-- AsyncSSH
-- WebSocket
-## Frontend
-- Vanilla JS
-- SPA Router
-- Chart.js или Apache ECharts
-## Monitoring
-- Prometheus
-- Grafana
-## Metrics Storage
-- TimescaleDB или VictoriaMetrics
+# Целевой стек
+Backend:
+* FastAPI
+* AsyncSSH
+* SQLAlchemy
+* PostgreSQL
+* TimescaleDB
+* WebSocket
+Frontend:
+* Vanilla JS
+* Chart.js
+Monitoring:
+* Prometheus
+* Grafana
+* Node Exporter
+
 ---
 
-# 5. Целевая архитектура проекта
-## Backend
+# Целевая архитектура
 Node Manager
+↓
+SSH Executor
 ↓
 Scenario Engine
 ↓
 Test Orchestrator
-↓
-SSH Executor
 ↓
 Metrics Manager
 ↓
@@ -170,124 +104,132 @@ Report Generator
 
 ---
 
-## Целевая бизнес-модель
-Node
-→ Scenario
-→ TestRun
-→ Metrics
-→ Result
-→ Alert
-→ Report
----
-
-## Основные сущности
-### Infrastructure
-- Node
-- NodeRole
-- NodeStatus
-### Scenarios
-- Scenario
-- ScenarioStep
-- ScenarioParameter
-### Runs
-- TestRun
-- RunResult
-### Metrics
-- Metric
-- MetricSnapshot
-- MetricSeries
-### Events
-- Event
-- Alert
-### Reports
-- Report
+# Поддерживаемые роли узлов
+* MEDIA_SERVER
+* LOAD_SERVER
+Будущие:
+* ARCHIVE_SERVER
+* ANALYTICS_SERVER
 
 ---
 
-# 6. ИНФОРМАЦИЯ ДЛЯ ИИ
-## 6.1 Архитектурные правила
-### Backend
-Обязательная структура:
+# Типы тестирования
+## Устойчивость
+Потоки:
+* 20% WebRTC
+* 10% Real Streams
+* 70% Synthetic Streams
+Контент:
+* 10 типов видеоконтента
+* H264
+* H265
+* 480p–4K
+* 0.5–10 Mbps
+## Архив
+Проверка:
+* постоянной записи
+* записи по событию
+## Отказоустойчивость
+Сценарии:
+* Restart Live
+* Restart Database
+## Камеры
+Симуляция:
+* Normal
+* Limited Bandwidth
+* Link Flapping
+## API
+Контроль:
+* Latency
+* Timeout
+* 5xx Errors
+* Regression
+## Сверхнагрузка
+Цель: Определение предельной производительности системы.
+---
+
+# Нагрузочные профили
+* 100 Streams
+* 500 Streams
+* 1000 Streams
+* Step Growth
+* Avalanche
+* Leak Test
+* Mixed Clients
+---
+
+# Критерии успеха
+* архив записывается без артефактов;
+* live потоки без артефактов;
+* CPU < 80%;
+* равномерная загрузка CPU;
+* отсутствие утечек RAM;
+* контроль Load Average;
+* количество активных потоков соответствует входящим;
+* количество записей соответствует ожидаемому.
+
+---
+
+# Архитектурные правила
+## Backend
+Структура:
 Router
 → Service
 → Repository
 → Database
 Правила:
-- Router не содержит бизнес-логики.
-- Service не работает напрямую с HTTP.
-- Repository работает только с БД.
-- SQL не размещается в Router.
-- Бизнес-логика не размещается в Repository.
-- Любая новая сущность должна иметь:
-  - Model
-  - Repository
-  - Service
-  - Router
-  - API
+* Router отвечает только за HTTP.
+* Service содержит бизнес-логику.
+* Repository работает только с БД.
+* Не использовать shell=True.
+* Использовать whitelist запускаемых инструментов.
+
 ---
-### Frontend
-Обязательная структура:
-API
+
+## Frontend
+Структура:
+api/
+pages/
+components/
+router/
+state/
+Правила:
+* fetch только внутри api/.
+* app.js только bootstrap.
+* бизнес-логика не размещается в UI.
+* навигация только через router.
+---
+
+## Реализация новых сущностей
+Обязательная цепочка:
+Database
+→ Repository
+→ Service
+→ Router
+→ API
+→ Frontend API
 → Page
 → UI
-Правила:
-- fetch только внутри api/.
-- страницы не обращаются напрямую к backend.
-- app.js содержит только bootstrap.
-- маршрутизация только через router.
-- UI не содержит бизнес-логики.
 ---
-### Database
-Правила:
-- PostgreSQL является единственным источником данных.
-- Использовать Alembic для всех изменений схемы.
-- Не хранить доменные данные в JSON-файлах.
-- Все сущности должны иметь миграции.
----
-### UI
-Правила:
-- Каждая сущность должна иметь интерфейс управления.
-- Данные должны быть доступны пользователю через Web UI.
-- API без UI не считается завершенной реализацией.
----
-## 6.2 Правила принятия решений
-При реализации:
-1. Сначала писать код.
-2. Объяснения минимальные.
-3. Не предлагать несколько вариантов без необходимости.
-4. Давать готовые изменения файлов.
-5. Показывать конкретные патчи и код.
-6. Избегать абстрактных рассуждений.
-7. Если найден архитектурный долг — указать одной короткой секцией.
 
+# Правила принятия решений
+При реализации:
+1. Сначала код.
+2. Минимум объяснений.
+3. Максимум готовых изменений файлов.
+4. Не предлагать несколько вариантов без необходимости.
+5. Учитывать целевую архитектуру.
 Приоритет:
 Код → Архитектура → Объяснение
-а не наоборот.
 
 ---
 
-## 6.3 Правило завершения этапов
-Этап считается завершенным только если реализованы все уровни:
-### Data Layer
-- модели БД
-- миграции
-### Repository Layer
-- CRUD
-- запросы
-### Business Layer
-- сервисы
-- бизнес-логика
-### API Layer
-- роуты
-- схемы
-### Frontend Layer
-- API клиент
-- страницы
-### UI Layer
-- отображение
-- управление
-- обработка ошибок
-
-Обязательная цепочка реализации:
-Database → Repository → Service → Router → API → Frontend API → Page → UI
-Если отсутствует хотя бы один уровень — этап имеет статус: IN PROGRESS а не COMPLETED.
+# Правило завершения этапов
+Этап считается завершенным только если реализованы:
+1. Data Layer
+2. Repository Layer
+3. Business Layer
+4. API Layer
+5. Frontend Layer
+6. UI Layer
+Если отсутствует хотя бы один уровень, статус = IN PROGRESS

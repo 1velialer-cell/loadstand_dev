@@ -1,8 +1,7 @@
 # Roadmap LoadStand
 
 ## Этап 1. Run System
-Цель: Перейти от запуска инструментов к полноценным тестовым запускам.
-
+Цель: Ввести модель тестовых запусков.
 Реализовано:
 * TestRun
 * RunStatus
@@ -10,260 +9,264 @@
 * PostgreSQL
 * SQLAlchemy
 * Alembic
-* хранение запусков
-* хранение результатов
 * история запусков
-* отображение результатов в Web UI
+* хранение результатов
+* Web UI результатов
 
 Результат:
-Tool → Run → Result
-
+Tool → TestRun → RunResult
 Статус: COMPLETED
-
 ---
 
 ## Этап 2. Node Manager
-Цель: Ввести доменную сущность Node и централизованное управление узлами выполнения.
-
+Цель: Управление инфраструктурными узлами.
 Реализовано:
 * Node
 * NodeRole
+* NodeStatus
 * NodeRepository
 * NodeService
-* PostgreSQL хранение узлов
-* CRUD API для Nodes
-* Web UI управления Nodes
-* Node Status
-* Node Check API
-* перенос хранения Nodes из JSON в PostgreSQL
-
-В работе:
+* PostgreSQL хранение
+* CRUD API
+* CRUD UI
 * Last Seen
-* Health Check логика
-* автоматическое обновление статусов
-* очистка legacy Servers
-
+* Health Check
 Поддерживаемые роли:
 * MEDIA_SERVER
 * LOAD_SERVER
 
 Результат:
-Node → Run
-
-Статус: IN_PROGRESS
+Node → CRUD → UI
+Статус: COMPLETED
 
 ---
 
 ## Этап 3. SSH Executor
-Цель: Выполнение тестов на удалённых узлах.
-
+Цель: Удаленное выполнение команд.
 Реализовать:
 * AsyncSSH
-* SSH Connection Pool
-* удалённое выполнение команд
-* остановку процессов
-* получение stdout/stderr
-* загрузку файлов
-* проверку доступности узлов через SSH
-
+* SSH Pool
+* Execute Command
+* Stop Command
+* stdout
+* stderr
 Результат:
-Run
-→ SSH Executor
-→ Node
-
+Node → SSH Executor
 Статус: PLANNED
 
 ---
 
-## Этап 4. Distributed Run Engine
-Цель: Запуск тестов непосредственно на Nodes.
-
+## Этап 4. Node Monitoring
+Цель: Мониторинг доступности узлов.
 Реализовать:
-* назначение Run на Node
-* выбор Node по роли
-* очередь выполнения
-* контроль статусов выполнения
-* распределение нагрузки между Nodes
-* отмену запуска
+* SSH Health Check
+* Online/Offline
+* Last Seen Update
+* Auto Refresh
 
 Результат:
-Run
-→ Node
-→ Execution
-
+Node → Health
 Статус: PLANNED
 
 ---
 
 ## Этап 5. Live Logs
+Цель: Отображение выполнения в реальном времени.
 Реализовать:
 * WebSocket
-* потоковую передачу логов
-* отображение статуса выполнения
-* отображение прогресса запуска
-* уведомления о завершении
-* просмотр логов в реальном времени
+* Streaming Logs
+* Run Status Updates
+* Progress Updates
 
 Результат:
-Run
-→ Live Logs
-→ Web UI
+Run → Live Logs → UI
 
 Статус: PLANNED
 
 ---
 
-## Этап 6. Scenario Engine
+## Этап 6. Load Profiles
+Цель: Стандартизировать нагрузку.
+Реализовать:
+* LoadProfile
+* 100 Streams
+* 500 Streams
+* 1000 Streams
+* Custom Profiles
+
+Результат:
+LoadProfile → Run
+
+Статус: PLANNED
+
+---
+
+## Этап 7. Traffic Generator
+Цель: Генерация видеопотоков.
+Реализовать:
+* MediaMTX Integration
+* RTSP Streams
+* WebRTC Streams
+* Synthetic Streams
+* Mixed Streams
+
+Результат:
+Profile → Traffic
+
+Статус: PLANNED
+
+---
+
+## Этап 8. API Load Generator
+Цель: Нагрузка на API видеосервиса.
+Реализовать:
+* GET Load
+* POST Load
+* Latency Metrics
+* Error Rate Metrics
+* Baseline Measurement
+
+Результат:
+Profile → API Load
+
+Статус: PLANNED
+
+---
+
+## Этап 9. Scenario Engine
+Цель: Оркестрация тестов.
 Реализовать:
 * Scenario
 * ScenarioStep
 * ScenarioParameter
-* выполнение сценариев
-* условия выполнения
-* повторное использование сценариев
-
-Типовой сценарий:
-
-Подготовка
-↓
-Запуск RTSP
-↓
-Подключение
-↓
-Нагрузка
-↓
-Сбор результатов
-↓
-Отчет
+* Scenario Runner
 
 Результат:
-Scenario
-→ Run
+Scenario → Run
 
 Статус: PLANNED
 
 ---
 
-## Этап 7. Metrics Manager
-Цель: Сбор инфраструктурных и прикладных метрик.
+## Этап 10. Failure Injection
+Цель: Проверка отказоустойчивости.
+Реализовать:
+* Service Restart
+* Database Restart
+* Link Flapping
+* Bandwidth Limiting
 
-Infrastructure:
+Результат:
+Scenario → Failure Test
+
+Статус: PLANNED
+
+---
+
+## Этап 11. Infrastructure Metrics
+Цель: Сбор инфраструктурных метрик.
+Реализовать:
 * CPU
 * RAM
-* Disk Usage
+* Disk
 * Disk IO
 * Network IO
 * Load Average
 
-Video:
+Результат:
+Node → Metrics
+
+Статус: PLANNED
+
+---
+
+## Этап 12. Video Metrics
+Цель: Сбор метрик видеосервиса.
+Реализовать:
+* Active Streams
 * FPS
 * Bitrate
-* Streams
-* Frame Loss
 * Reconnects
-
-Service:
-* Active Streams
-* Camera Count
-* Processing Queues
-
-Archive:
-* Write Speed
-* Queue Size
-* Disk Space
+* Frame Loss
+* Recording Count
 
 Результат:
-Run
-→ Metrics
+Video → Metrics
 
 Статус: PLANNED
 
 ---
 
-## Этап 8. Historical Metrics Storage
+## Этап 13. Historical Metrics Storage
+Цель: Долговременное хранение метрик.
 Реализовать:
 * TimescaleDB
-* хранение временных рядов
-* сравнение запусков
-* агрегирование данных
-* долгосрочное хранение
-* базовую аналитику
+* Aggregation
+* Retention Policies
+* Run Comparison
 
 Результат:
-Metrics
-→ History
+Metrics → History
 
 Статус: PLANNED
 
 ---
 
-## Этап 9. Result Analyzer
+## Этап 14. Result Analyzer
+Цель: Автоматическая оценка результатов.
 Реализовать:
-* критерии успешности
-* эталонные профили
 * PASS
 * WARNING
 * FAIL
-* автоматическую оценку результатов
-* сравнение с предыдущими запусками
+* Success Rules
+* Regression Detection
 
 Результат:
-Metrics
-→ Result
+Metrics → Result
 
 Статус: PLANNED
 
 ---
 
-## Этап 10. Alert Manager
+## Этап 15. Alert Manager
+Цель: Уведомления об инцидентах.
 Реализовать:
 * Event
 * Alert
-* правила обнаружения инцидентов
-* Telegram уведомления
-* Email уведомления
-* журнал событий
+* Telegram
+* Email
 
 Результат:
-Result
-→ Alert
+Result → Alert
 
 Статус: PLANNED
 
 ---
 
-## Этап 11. Reports
+## Этап 16. Report Generator
+Цель: Формирование отчетов.
 Реализовать:
-* Report
-* генерацию отчетов
-* HTML отчеты
-* PDF отчеты
-* экспорт результатов
-* сравнительные отчеты
-* экспорт метрик
+* HTML Reports
+* PDF Reports
+* Metrics Summary
+* Comparison Reports
 
 Результат:
-Run
-→ Report
+Run → Report
 
 Статус: PLANNED
 
 ---
 
-## Этап 12. Production Ready
+## Этап 17. Production Ready
 Реализовать:
 * Docker Compose
 * Nginx
 * HTTPS
 * RBAC
-* аудит действий
-* резервное копирование
-* Grafana
+* Backup
 * Prometheus
+* Grafana
 * CI/CD
-* мониторинг системы
-
-Результат:
-Production Deployment
 
 Статус: PLANNED
