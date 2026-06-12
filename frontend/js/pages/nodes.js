@@ -87,8 +87,11 @@ export function initNodesPage() {
     loadNodes();
 }
 
+import { setActiveTab } from "../router/router.js";
+
 export function showNodesPage() {
     hideAllPanels();
     document.getElementById("nodes-panel").classList.remove("hidden");
+    setActiveTab("/nodes");
     loadNodes();
 }
