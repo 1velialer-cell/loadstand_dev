@@ -33,6 +33,7 @@
             <button data-route="/loading" class="tab">LOADING</button>
             <button data-route="/servers" class="tab">SERVERS</button>
             <button data-route="/runs" class="tab">RUNS</button>
+            <button data-route="/nodes" class="tab">NODES</button>
           </div>
         </div>
 <!-- header справа -->
@@ -100,6 +101,22 @@
     </thead>
     <tbody id="runs-body"></tbody>
     </table>
+</div>
+<!-- блок nodes -->
+<div id="nodes-panel" class="hidden">
+    <h2>Nodes</h2>
+    <div>
+        <input id="node-name" placeholder="Name" />
+        <input id="node-host" placeholder="Host" />
+        <input id="node-port" placeholder="Port" />
+        <select id="node-role">
+            <option value="MEDIA_SERVER">MEDIA_SERVER</option>
+            <option value="LOAD_SERVER">LOAD_SERVER</option>
+        </select>
+        <button id="node-save-btn">Добавить</button>
+    </div>
+    <div id="nodes-list"></div>
+    <div id="node-details" class="hidden"></div>
 </div>
 <!-- стяг app.js -->
   <script type="module" src="/static/js/app.js"></script>

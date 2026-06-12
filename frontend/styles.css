@@ -103,7 +103,7 @@ background: transparent;
 .tabs{
   margin-left:170px; 
   display:flex;
-  gap:8px;
+  gap:80px;
   flex-wrap:wrap;
 }
 .tab{padding:8px 100px;border-radius:10px;background:transparent;color:var(--muted);border:1px solid transparent;cursor:pointer;transition:.2s ease}
@@ -221,4 +221,106 @@ input[type=range]::-webkit-slider-thumb,input[type=range]::-moz-range-thumb{widt
 .result-btn {
     cursor: pointer;
     padding: 6px 12px;
+}
+/* ноды */
+.server-item {
+    padding: 10px;
+    margin: 5px;
+    background: #222;
+    color: white;
+    cursor: pointer;
+    border-radius: 6px;
+}
+
+.server-item:hover {
+    background: #333;
+}
+
+#node-details {
+    margin-top: 20px;
+    padding: 10px;
+    background: #111;
+    color: white;
+    border-radius: 8px;
+}
+
+.hidden {
+    display: none;
+}
+
+.panel {
+    padding: 16px;
+}
+
+#nodes-panel {
+    padding: 16px;
+}
+
+#nodes-panel input,
+#nodes-panel select {
+    padding: 8px;
+    margin: 4px;
+    border-radius: 6px;
+    border: 1px solid #333;
+    background: #111;
+    color: #fff;
+}
+
+#node-save-btn {
+    margin-top: 8px;
+    padding: 8px 12px;
+    background: #2d6cdf;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+#node-save-btn:hover {
+    background: #1f4fb8;
+}
+
+.node-item {
+    background: #1a1a1a;
+    padding: 10px;
+    margin: 6px 0;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.node-item:hover {
+    background: #2a2a2a;
+}
+
+.node-card {
+    background: #1e1e1e;
+    border: 1px solid #333;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    color: #fff;
+}
+
+.node-title {
+    font-weight: bold;
+    margin-bottom: 4px;
+}
+
+.node-meta {
+    font-size: 12px;
+    opacity: 0.8;
+}
+
+.node-actions {
+    margin-top: 8px;
+    display: flex;
+    gap: 6px;
+}
+
+.status.ONLINE {
+    color: #4caf50;
+}
+
+.status.OFFLINE {
+    color: #f44336;
 }

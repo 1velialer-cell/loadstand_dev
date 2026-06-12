@@ -1,4 +1,5 @@
 import {getMediaServers,getLoadServers,getServer,createServer,updateServer,removeServer} from "../api/servers.js";
+import { hideAllPanels } from "../utils/panels.js";
 const el = id =>document.getElementById(id);
 let editingServerId = null;
 
@@ -33,21 +34,12 @@ export async function loadServers() {
     renderServerList("load-list",load);
 }
 
-export async function showServer(id) {
-    const server =await getServer(id);
-    const panel = el("server-details");
-    panel.classList.remove("hidden");
-    panel.innerHTML = `
-        <h3>${server.name}</h3>
-        <p>Host: ${server.host}</p>
-        <p>Login: ${server.ssh_login}</p>
-        <p>Type: ${server.type}</p>
-        <button onclick="editServer('${server.id}')">
-            Редактировать
-        </button>
-        <button onclick="deleteServer('${server.id}')">
-            Удалить
-        </button>`;}
+export async function showServersPage() {
+    el("tests-panel").classList.add("hidden");
+    el("runs-panel").classList.add("hidden");
+    el("servers-panel").classList.remove("hidden");
+    await loadServers();
+}
 
 async function saveServer() {
     const data = {
@@ -84,11 +76,4 @@ export function initServersPage() {
     if (btn) {btn.addEventListener("click",saveServer);}
     window.editServer = editServer;
     window.deleteServer = deleteServer;
-}
-
-export async function showServersPage() {
-    el("tests-panel").classList.add("hidden");
-    el("runs-panel").classList.add("hidden");
-    el("servers-panel").classList.remove("hidden");
-    await loadServers();
 }

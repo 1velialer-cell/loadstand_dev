@@ -1,13 +1,12 @@
 import { getRuns,getRunResult } from "../api/runs.js";
 import { authState } from "../state/auth.js";
+import { hideAllPanels } from "../utils/panels.js";
 const el = id => document.getElementById(id);
 
 export async function showRunsPage() {
-    el("tests-panel").classList.add("hidden");
-    el("servers-panel").classList.add("hidden");
+    hideAllPanels();
     el("runs-panel").classList.remove("hidden");
     await loadRuns();
-    renderRuns(runs);
 }
 
 function formatDate(value) {

@@ -1,7 +1,6 @@
 from pydantic import BaseModel
-from typing import Optional, Dict, Any
+from typing import Optional, Dict, Any, Literal
 from uuid import UUID
-from typing import Literal
 from enum import Enum
 
 class Creds(BaseModel):
@@ -68,3 +67,15 @@ class RunRead(BaseModel):
     status: str
     class Config:
         from_attributes = True
+
+class NodeCreate(BaseModel):
+    name: str
+    host: str
+    port: int
+    role: Literal["MEDIA_SERVER", "LOAD_SERVER"]
+
+class NodeUpdate(BaseModel):
+    name: Optional[str] = None
+    host: Optional[str] = None
+    port: Optional[int] = None
+    role: Optional[Literal["MEDIA_SERVER", "LOAD_SERVER"]] = None
