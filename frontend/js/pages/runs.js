@@ -7,6 +7,7 @@ export async function showRunsPage() {
     el("servers-panel").classList.add("hidden");
     el("runs-panel").classList.remove("hidden");
     await loadRuns();
+    renderRuns(runs);
 }
 
 function formatDate(value) {

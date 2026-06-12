@@ -25,13 +25,5 @@ export async function apiRequest(method,url,body = null) {
     if (response.status === 204) {
         return null;
     }
-    // if (DEBUG) {
-    // apiCalls.unshift({
-    //     method,
-    //     url,
-    //     status: response.status,
-    //     time: new Date()
-    // });
-    // }
     return response.json();
 }
