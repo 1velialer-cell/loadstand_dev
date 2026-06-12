@@ -1,4 +1,5 @@
 import {createRun,getRunResult} from "../api/runs.js";
+import { hideAllPanels } from "../utils/panels.js";
 const el = id => document.getElementById(id);
 const MESSAGES = {
     testSuccess: "✅ Тест завершён",
@@ -56,7 +57,9 @@ export function initToolsPage() {
         btn.addEventListener("click",() => runTool(name));
     });
 }
+
 export function showToolPage(toolName) {
+    hideAllPanels();
     const outputEl = el("tool-output");
     if (outputEl) {outputEl.innerHTML = "";}
     el("servers-panel").classList.add("hidden");
