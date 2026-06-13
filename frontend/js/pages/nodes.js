@@ -23,7 +23,7 @@ function renderNodes(nodes) {
         item.className = "node-card";
         item.innerHTML = `
             <div class="node-title">${node.name}</div>
-            <div class="node-meta">${node.host}:${node.port}</div>
+            <div class="node-meta">${node.host}:${node.port}</div><div class="node-meta">SSH: ${node.ssh_login ? node.ssh_login : '—'} / ${node.ssh_password ? '••••••' : '—'}</div>
             <div class="node-meta">${node.role}</div>
             <div class="node-meta status ${node.status}">${node.status}</div>
 

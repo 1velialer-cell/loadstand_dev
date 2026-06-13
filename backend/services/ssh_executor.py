@@ -31,23 +31,6 @@ class SSHExecutor:
         login = getattr(node, "ssh_login", None)
         password = getattr(node, "ssh_password", None)
 
-        # fallback: try to find credentials in data/servers.json by matching host
-        if (not login or not password):
-            try:
-                data_file = Path("data/servers.json")
-                if data_file.exists():
-                    with data_file.open("r", encoding="utf-8") as f:
-                        servers = json.load(f)
-                    for s in servers:
-                        if s.get("host") == node.host:
-                            if not login:
-                                login = s.get("ssh_login")
-                            if not password:
-                                password = s.get("ssh_password")
-                            break
-            except Exception:
-                pass
-
         if not login or not password:
             raise ValueError("SSH credentials missing for node")
 

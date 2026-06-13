@@ -31,7 +31,6 @@
             <button data-route="/smoke" class="tab active">SMOKE</button>
             <button data-route="/stability" class="tab">STABILITY</button>
             <button data-route="/loading" class="tab">LOADING</button>
-            <button data-route="/servers" class="tab">SERVERS</button>
             <button data-route="/runs" class="tab">RUNS</button>
             <button data-route="/nodes" class="tab">NODES</button>
             <button data-route="/ssh" class="tab">SSH</button>
@@ -58,32 +57,6 @@
           </div>
         </section>
 <!-- страница серверы -->
-        <section id="servers-panel" class="panel panel-wide hidden"> 
-        <h3>Добавление сервера</h3>
-          <input id="srv-name" placeholder="Имя">
-          <input id="srv-host" placeholder="IP / Host">
-          <input id="srv-login" placeholder="SSH login">
-          <input id="srv-password" type="password" placeholder="SSH password">
-          <select id="srv-type">
-              <option value="">Тип</option>
-              <option value="media">Media</option>
-              <option value="load">Load</option>
-          </select>
-          <div id="server-details"class="card hidden"></div>
-          <button id="add-server-btn">
-              Добавить
-          </button>
-                  <div class="servers-columns">
-              <div>
-                  <h3>Media</h3>
-                  <div id="media-list"></div>
-              </div>
-              <div>
-                  <h3>Load</h3>
-                  <div id="load-list"></div>
-              </div>
-          </div>
-        </section>
 <!-- блок runs -->
 <div id="runs-panel" class="hidden">
   <div class="runs-header">
@@ -122,7 +95,7 @@
     <div id="node-details" class="hidden"></div>
 </div>
 <!-- блок ssh -->
-<div id="ssh-panel" class="hidden">
+<div id="ssh-panel" class="hidden panel panel-wide">
   <div class="ssh-header">
     <h2>SSH Executor</h2>
   </div>
@@ -139,9 +112,15 @@
     <button id="ssh-stop-btn" class="btn ghost">Stop</button>
   </div>
   <div class="ssh-status" id="ssh-status"></div>
-  <div class="output">
-    <h3>SSH Output</h3>
-    <pre id="ssh-output" style="white-space: pre-wrap; max-height:400px; overflow:auto;"></pre>
+  <div class="ssh-windows">
+    <div class="ssh-stdout">
+      <h4>Stdout</h4>
+      <pre id="ssh-stdout" class="ssh-pre"></pre>
+    </div>
+    <div class="ssh-stderr">
+      <h4>Stderr</h4>
+      <pre id="ssh-stderr" class="ssh-pre"></pre>
+    </div>
   </div>
 </div>
 <!-- стяг app.js -->

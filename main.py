@@ -5,7 +5,6 @@ from backend.core.config import settings
 from backend.routers.auth import router as auth_router
 from backend.routers.tools import router as tools_router
 from backend.routers.logo import router as logo_router 
-from backend.routers.servers import router as servers_router
 from backend.routers.runs import router as runs_router
 from backend.routers.ssh import router as ssh_router
 from backend.db.init_db import init_db
@@ -16,7 +15,6 @@ from backend.routers.nodes import router as nodes_router
 app = FastAPI(title="LoadStand",version="0.3.0",description="Система запуска smoke/load/stability тестов")
 app.mount("/static",StaticFiles(directory=str(settings.FRONTEND_DIR)),name="static")
 app.include_router(auth_router, prefix="/api")
-app.include_router(servers_router, prefix="/api")
 app.include_router(tools_router, prefix="/api")
 app.include_router(logo_router, prefix="/api")
 app.include_router(runs_router, prefix="/api")

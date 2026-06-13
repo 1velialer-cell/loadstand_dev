@@ -30,7 +30,8 @@ export async function showSSHPage() {
     currentNodeId = null;
     await populateNodeOptions();
     el("ssh-command").value = "";
-    el("ssh-output").textContent = "";
+    el("ssh-stdout").textContent = "";
+    el("ssh-stderr").textContent = "";
     el("ssh-status").textContent = "";
 }
 
@@ -70,7 +71,8 @@ async function pollSSHResult() {
     }
     try {
         const status = await getSSHCommand(currentCommandId);
-        el("ssh-output").textContent = `stdout:\n${status.stdout || ""}\nstderr:\n${status.stderr || ""}`;
+        el("ssh-stdout").textContent = status.stdout || "";
+        el("ssh-stderr").textContent = status.stderr || "";
         if (status.status === "running") {
             setTimeout(pollSSHResult, 1000);
         } else {
@@ -89,7 +91,8 @@ async function stopSSHCommandAction() {
     try {
         const result = await stopSSHCommand(currentCommandId);
         el("ssh-status").textContent = `Stopped: ${result.status}`;
-        el("ssh-output").textContent = `stdout:\n${result.stdout || ""}\nstderr:\n${result.stderr || ""}`;
+        el("ssh-stdout").textContent = result.stdout || "";
+        el("ssh-stderr").textContent = result.stderr || "";
     } catch (err) {
         el("ssh-status").textContent = err.message || "Failed to stop command.";
     }

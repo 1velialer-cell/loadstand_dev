@@ -63,7 +63,6 @@ export function showToolPage(toolName) {
     hideAllPanels();
     const outputEl = el("tool-output");
     if (outputEl) {outputEl.innerHTML = "";}
-    el("servers-panel").classList.add("hidden");
     el("runs-panel").classList.add("hidden");
     el("tests-panel").classList.remove("hidden");
     el("panel-title").textContent = toolName;
