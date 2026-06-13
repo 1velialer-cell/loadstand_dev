@@ -335,7 +335,10 @@ input[type=range]::-webkit-slider-thumb,input[type=range]::-moz-range-thumb{widt
 #ssh-panel label{display:block;margin-bottom:4px;color:var(--muted);font-size:13px}
 
 .ssh-header{margin-bottom:16px}
-.ssh-status{margin:12px 0;padding:8px 12px;border-radius:6px;background:var(--accent-weak);color:var(--text);font-size:14px;min-height:24px}
+.ssh-status{margin:12px 0;padding:8px 12px;border-radius:6px;background:var(--accent-weak);color:var(--text);font-size:14px;min-height:24px;transition:background .2s ease,color .2s ease,border .2s ease;}
+.ssh-status.online{background:rgba(34,197,94,0.14);color:#4ade80;border:1px solid rgba(34,197,94,0.25);}
+.ssh-status.offline{background:rgba(239,68,68,0.14);color:#fed7aa;border:1px solid rgba(239,68,68,0.25);}
+.ssh-status.unknown{background:rgba(59,130,246,0.12);color:#bfdbfe;border:1px solid rgba(59,130,246,0.25);}
 
 .ssh-windows{
   display:flex;gap:16px;margin-top:20px

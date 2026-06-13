@@ -20,12 +20,12 @@ async def list_nodes(service: NodeService = Depends(get_service)):
     return service.list()
 
 @router.delete("/{node_id}")
-async def delete_node(node_id: str,service: NodeService = Depends(get_service)):
-    return service.delete(node_id)
+async def delete_node(node_id: str, service: NodeService = Depends(get_service)):
+    return await service.delete(node_id)
 
 @router.patch("/{node_id}")
-async def update_node(node_id: str,payload: NodeUpdate,service: NodeService = Depends(get_service)):
-    return service.update(node_id, payload.model_dump(exclude_unset=True))
+async def update_node(node_id: str, payload: NodeUpdate, service: NodeService = Depends(get_service)):
+    return await service.update(node_id, payload.model_dump(exclude_unset=True))
 
 from backend.services.ssh_executor import executor
 from datetime import datetime
