@@ -73,9 +73,16 @@ class NodeCreate(BaseModel):
     host: str
     port: int
     role: Literal["MEDIA_SERVER", "LOAD_SERVER"]
+    ssh_login: Optional[str] = None
+    ssh_password: Optional[str] = None
 
 class NodeUpdate(BaseModel):
     name: Optional[str] = None
     host: Optional[str] = None
     port: Optional[int] = None
     role: Optional[Literal["MEDIA_SERVER", "LOAD_SERVER"]] = None
+    ssh_login: Optional[str] = None
+    ssh_password: Optional[str] = None
+
+class SSHCommandRequest(BaseModel):
+    command: str

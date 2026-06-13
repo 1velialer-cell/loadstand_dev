@@ -31,9 +31,9 @@
             <button data-route="/smoke" class="tab active">SMOKE</button>
             <button data-route="/stability" class="tab">STABILITY</button>
             <button data-route="/loading" class="tab">LOADING</button>
-            <button data-route="/servers" class="tab">SERVERS</button>
             <button data-route="/runs" class="tab">RUNS</button>
             <button data-route="/nodes" class="tab">NODES</button>
+            <button data-route="/ssh" class="tab">SSH</button>
           </div>
         </div>
 <!-- header справа -->
@@ -57,32 +57,6 @@
           </div>
         </section>
 <!-- страница серверы -->
-        <section id="servers-panel" class="panel panel-wide hidden"> 
-        <h3>Добавление сервера</h3>
-          <input id="srv-name" placeholder="Имя">
-          <input id="srv-host" placeholder="IP / Host">
-          <input id="srv-login" placeholder="SSH login">
-          <input id="srv-password" type="password" placeholder="SSH password">
-          <select id="srv-type">
-              <option value="">Тип</option>
-              <option value="media">Media</option>
-              <option value="load">Load</option>
-          </select>
-          <div id="server-details"class="card hidden"></div>
-          <button id="add-server-btn">
-              Добавить
-          </button>
-                  <div class="servers-columns">
-              <div>
-                  <h3>Media</h3>
-                  <div id="media-list"></div>
-              </div>
-              <div>
-                  <h3>Load</h3>
-                  <div id="load-list"></div>
-              </div>
-          </div>
-        </section>
 <!-- блок runs -->
 <div id="runs-panel" class="hidden">
   <div class="runs-header">
@@ -109,6 +83,8 @@
         <input id="node-name" placeholder="Name" />
         <input id="node-host" placeholder="Host" />
         <input id="node-port" placeholder="Port" />
+      <input id="node-ssh-login" placeholder="SSH login" />
+      <input id="node-ssh-password" placeholder="SSH password" type="password" />
         <select id="node-role">
             <option value="MEDIA_SERVER">MEDIA_SERVER</option>
             <option value="LOAD_SERVER">LOAD_SERVER</option>
@@ -117,6 +93,35 @@
     </div>
     <div id="nodes-list"></div>
     <div id="node-details" class="hidden"></div>
+</div>
+<!-- блок ssh -->
+<div id="ssh-panel" class="hidden panel panel-wide">
+  <div class="ssh-header">
+    <h2>SSH Executor</h2>
+  </div>
+  <div class="control-row">
+    <label for="ssh-node">Node</label>
+    <select id="ssh-node"></select>
+  </div>
+  <div class="control-row">
+    <label for="ssh-command">Command</label>
+    <input id="ssh-command" placeholder="Enter shell command" />
+  </div>
+  <div class="buttons">
+    <button id="ssh-run-btn" class="btn primary">Run</button>
+    <button id="ssh-stop-btn" class="btn ghost">Stop</button>
+  </div>
+  <div class="ssh-status" id="ssh-status"></div>
+  <div class="ssh-windows">
+    <div class="ssh-stdout">
+      <h4>Stdout</h4>
+      <pre id="ssh-stdout" class="ssh-pre"></pre>
+    </div>
+    <div class="ssh-stderr">
+      <h4>Stderr</h4>
+      <pre id="ssh-stderr" class="ssh-pre"></pre>
+    </div>
+  </div>
 </div>
 <!-- стяг app.js -->
   <script type="module" src="/static/js/app.js"></script>

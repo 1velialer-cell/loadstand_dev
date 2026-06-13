@@ -103,10 +103,10 @@ background: transparent;
 .tabs{
   margin-left:170px; 
   display:flex;
-  gap:80px;
+  gap:24px;
   flex-wrap:wrap;
 }
-.tab{padding:8px 100px;border-radius:10px;background:transparent;color:var(--muted);border:1px solid transparent;cursor:pointer;transition:.2s ease}
+.tab{padding:8px 24px;border-radius:10px;background:transparent;color:var(--muted);border:1px solid transparent;cursor:pointer;transition:.2s ease}
 .tab:hover{color:var(--text);background:rgba(255,255,255,0.03)}
 .tab.active{color:var(--text);background:linear-gradient(90deg,rgba(0,156,209,0.14),rgba(0,156,209,0.05));border:1px solid rgba(0,156,209,0.18)}
 
@@ -173,8 +173,8 @@ input[type=range]::-webkit-slider-thumb,input[type=range]::-moz-range-thumb{widt
   background: rgba(0,156,209,0.08);
 }
 
-#servers-panel input,
-#servers-panel select {
+#nodes-panel input,
+#nodes-panel select {
   width: 100%;
   padding: 10px;
   margin-bottom: 12px;
@@ -324,3 +324,29 @@ input[type=range]::-webkit-slider-thumb,input[type=range]::-moz-range-thumb{widt
 .status.OFFLINE {
     color: #f44336;
 }
+
+/* SSH panel */
+#ssh-panel{padding:20px}
+#ssh-panel input,#ssh-panel select{
+  width:100%;padding:10px;margin:6px 0;
+  border-radius:8px;border:1px solid var(--border);
+  background:var(--panel);color:var(--text)
+}
+#ssh-panel label{display:block;margin-bottom:4px;color:var(--muted);font-size:13px}
+
+.ssh-header{margin-bottom:16px}
+.ssh-status{margin:12px 0;padding:8px 12px;border-radius:6px;background:var(--accent-weak);color:var(--text);font-size:14px;min-height:24px}
+
+.ssh-windows{
+  display:flex;gap:16px;margin-top:20px
+}
+.ssh-windows>div{flex:1}
+.ssh-pre{
+  white-space:pre-wrap;word-wrap:break-word;overflow-x:auto;
+  max-height:320px;padding:12px;margin:0;
+  background:var(--panel);border:1px solid var(--border);
+  border-radius:6px;font-family:'Courier New',monospace;font-size:13px;color:var(--text)
+}
+.ssh-stdout .ssh-pre{border-color:rgba(76,175,80,0.3)}
+.ssh-stderr .ssh-pre{border-color:rgba(244,67,54,0.3);color:#ffb3b3}
+.ssh-windows h4{margin:0 0 8px;font-size:13px;color:var(--muted)}

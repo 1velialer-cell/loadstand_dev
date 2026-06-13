@@ -1,11 +1,13 @@
 import { getRuns,getRunResult } from "../api/runs.js";
 import { authState } from "../state/auth.js";
 import { hideAllPanels } from "../utils/panels.js";
+import { setActiveTab } from "../router/router.js";
 const el = id => document.getElementById(id);
 
 export async function showRunsPage() {
     hideAllPanels();
     el("runs-panel").classList.remove("hidden");
+    setActiveTab("/runs");
     await loadRuns();
 }
 

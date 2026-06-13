@@ -1,5 +1,6 @@
 import {getNodes,createNode,updateNode,deleteNode,checkNode} from "../api/nodes.js";
 import { hideAllPanels } from "../utils/panels.js";
+import { setActiveTab } from "../router/router.js";
 const el = (id) => document.getElementById(id);
 let editingNodeId = null;
 
@@ -7,6 +8,8 @@ function clearForm() {
     el("node-name").value = "";
     el("node-host").value = "";
     el("node-port").value = "";
+    el("node-ssh-login").value = "";
+    el("node-ssh-password").value = "";
     el("node-role").value = "MEDIA_SERVER";
     editingNodeId = null;
     el("node-save-btn").textContent = "Добавить";
@@ -20,7 +23,7 @@ function renderNodes(nodes) {
         item.className = "node-card";
         item.innerHTML = `
             <div class="node-title">${node.name}</div>
-            <div class="node-meta">${node.host}:${node.port}</div>
+            <div class="node-meta">${node.host}:${node.port}</div><div class="node-meta">SSH: ${node.ssh_login ? node.ssh_login : '—'} / ${node.ssh_password ? '••••••' : '—'}</div>
             <div class="node-meta">${node.role}</div>
             <div class="node-meta status ${node.status}">${node.status}</div>
 
@@ -47,6 +50,8 @@ async function saveNode() {
         name: el("node-name").value.trim(),
         host: el("node-host").value.trim(),
         port: Number(el("node-port").value),
+        ssh_login: el("node-ssh-login").value.trim(),
+        ssh_password: el("node-ssh-password").value.trim(),
         role: el("node-role").value
     };
     if (editingNodeId) {
@@ -65,6 +70,8 @@ export async function editNode(id) {
     el("node-name").value = node.name;
     el("node-host").value = node.host;
     el("node-port").value = node.port;
+    el("node-ssh-login").value = node.ssh_login || "";
+    el("node-ssh-password").value = node.ssh_password || "";
     el("node-role").value = node.role;
     el("node-save-btn").textContent = "Сохранить";
 }
@@ -90,5 +97,6 @@ export function initNodesPage() {
 export function showNodesPage() {
     hideAllPanels();
     document.getElementById("nodes-panel").classList.remove("hidden");
+    setActiveTab("/nodes");
     loadNodes();
 }
