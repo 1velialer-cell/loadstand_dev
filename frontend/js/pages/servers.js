@@ -34,10 +34,13 @@ export async function loadServers() {
     renderServerList("load-list",load);
 }
 
+import { setActiveTab } from "../router/router.js";
+
 export async function showServersPage() {
     el("tests-panel").classList.add("hidden");
     el("runs-panel").classList.add("hidden");
     el("servers-panel").classList.remove("hidden");
+    setActiveTab("/servers");
     await loadServers();
 }
 
