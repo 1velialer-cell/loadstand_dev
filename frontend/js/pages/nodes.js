@@ -68,6 +68,18 @@ function stopAutoRefresh() {
     }
 }
 
+function refreshWhenVisible() {
+    if (document.visibilityState === "visible" && window.location.pathname === "/nodes") {
+        refreshNodes();
+    }
+}
+
+function refreshOnPageShow(event) {
+    if (window.location.pathname === "/nodes") {
+        refreshNodes();
+    }
+}
+
 async function saveNode() {
     const data = {
         name: el("node-name").value.trim(),
@@ -115,6 +127,8 @@ export function initNodesPage() {
     window.editNode = editNode;
     window.removeNode = removeNode;
     window.stopNodesAutoRefresh = stopAutoRefresh;
+    document.addEventListener("visibilitychange", refreshWhenVisible);
+    window.addEventListener("pageshow", refreshOnPageShow);
     loadNodes();
 }
 
