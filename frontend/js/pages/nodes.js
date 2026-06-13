@@ -8,6 +8,8 @@ function clearForm() {
     el("node-name").value = "";
     el("node-host").value = "";
     el("node-port").value = "";
+    el("node-ssh-login").value = "";
+    el("node-ssh-password").value = "";
     el("node-role").value = "MEDIA_SERVER";
     editingNodeId = null;
     el("node-save-btn").textContent = "Добавить";
@@ -48,6 +50,8 @@ async function saveNode() {
         name: el("node-name").value.trim(),
         host: el("node-host").value.trim(),
         port: Number(el("node-port").value),
+        ssh_login: el("node-ssh-login").value.trim(),
+        ssh_password: el("node-ssh-password").value.trim(),
         role: el("node-role").value
     };
     if (editingNodeId) {
@@ -66,6 +70,8 @@ export async function editNode(id) {
     el("node-name").value = node.name;
     el("node-host").value = node.host;
     el("node-port").value = node.port;
+    el("node-ssh-login").value = node.ssh_login || "";
+    el("node-ssh-password").value = node.ssh_password || "";
     el("node-role").value = node.role;
     el("node-save-btn").textContent = "Сохранить";
 }

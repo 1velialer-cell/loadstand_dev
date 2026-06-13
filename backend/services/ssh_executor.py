@@ -4,6 +4,8 @@ from dataclasses import dataclass, field
 from typing import Dict, Optional
 
 import asyncssh
+import json
+from pathlib import Path
 from backend.db.models.node import Node
 
 @dataclass
@@ -26,14 +28,34 @@ class SSHExecutor:
         self.lock = asyncio.Lock()
 
     async def _connect(self, node: Node) -> asyncssh.SSHClientConnection:
-        if not node.ssh_login or not node.ssh_password:
+        login = getattr(node, "ssh_login", None)
+        password = getattr(node, "ssh_password", None)
+
+        # fallback: try to find credentials in data/servers.json by matching host
+        if (not login or not password):
+            try:
+                data_file = Path("data/servers.json")
+                if data_file.exists():
+                    with data_file.open("r", encoding="utf-8") as f:
+                        servers = json.load(f)
+                    for s in servers:
+                        if s.get("host") == node.host:
+                            if not login:
+                                login = s.get("ssh_login")
+                            if not password:
+                                password = s.get("ssh_password")
+                            break
+            except Exception:
+                pass
+
+        if not login or not password:
             raise ValueError("SSH credentials missing for node")
 
         return await asyncssh.connect(
             node.host,
             port=node.port,
-            username=node.ssh_login,
-            password=node.ssh_password,
+            username=login,
+            password=password,
             known_hosts=None,
             client_keys=None,
             keepalive_interval=30,
