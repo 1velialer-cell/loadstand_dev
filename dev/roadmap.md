@@ -43,30 +43,32 @@ Node → CRUD → UI
 
 ## Этап 3. SSH Executor
 Цель: Удаленное выполнение команд.
-Реализовать:
+Реализовано:
 * AsyncSSH
 * SSH Pool
 * Execute Command
 * Stop Command
 * stdout
 * stderr
+* Persistent SSH connections
 Результат:
 Node → SSH Executor
-Статус: PLANNED
+Статус: COMPLETED
 
 ---
 
 ## Этап 4. Node Monitoring
 Цель: Мониторинг доступности узлов.
-Реализовать:
-* SSH Health Check
+Реализовано:
+* SSH Health Check (через /nodes/{id}/check)
 * Online/Offline
 * Last Seen Update
-* Auto Refresh
-
+* UI-индикатор статуса
 Результат:
 Node → Health
-Статус: PLANNED
+Статус: IN_PROGRESS
+
+---
 
 ---
 

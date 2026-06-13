@@ -37,6 +37,8 @@ Node
 * Auth API
 * Runs API
 * Nodes API
+* SSH Executor
+* Node Health Check
 
 ---
 
@@ -50,6 +52,7 @@ Node
 * Stability
 * Runs
 * Nodes
+* SSH
 
 ---
 
