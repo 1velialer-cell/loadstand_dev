@@ -25,12 +25,6 @@ function hideAllPages() {
         ?.classList.add("hidden");
 }
 
-export function setActiveTab(path) {
-    document.querySelectorAll(".tab").forEach(tab => {
-        tab.classList.toggle("active", tab.dataset.route === path);
-    });
-}
-
 export function renderRoute() {
     const path = window.location.pathname;
     const handler = routes[path];

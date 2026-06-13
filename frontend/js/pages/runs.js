@@ -3,12 +3,9 @@ import { authState } from "../state/auth.js";
 import { hideAllPanels } from "../utils/panels.js";
 const el = id => document.getElementById(id);
 
-import { setActiveTab } from "../router/router.js";
-
 export async function showRunsPage() {
     hideAllPanels();
     el("runs-panel").classList.remove("hidden");
-    setActiveTab("/runs");
     await loadRuns();
 }
 

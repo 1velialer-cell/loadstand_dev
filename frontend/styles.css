@@ -103,10 +103,10 @@ background: transparent;
 .tabs{
   margin-left:170px; 
   display:flex;
-  gap:24px;
+  gap:80px;
   flex-wrap:wrap;
 }
-.tab{padding:8px 24px;border-radius:10px;background:transparent;color:var(--muted);border:1px solid transparent;cursor:pointer;transition:.2s ease}
+.tab{padding:8px 100px;border-radius:10px;background:transparent;color:var(--muted);border:1px solid transparent;cursor:pointer;transition:.2s ease}
 .tab:hover{color:var(--text);background:rgba(255,255,255,0.03)}
 .tab.active{color:var(--text);background:linear-gradient(90deg,rgba(0,156,209,0.14),rgba(0,156,209,0.05));border:1px solid rgba(0,156,209,0.18)}
 
