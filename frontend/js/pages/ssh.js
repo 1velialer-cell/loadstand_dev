@@ -8,14 +8,19 @@ let currentNodeId = null;
 
 async function populateNodeOptions() {
     const nodeSelect = el("ssh-node");
-    nodeSelect.innerHTML = "<option value=\"\">Select node</option>";
     try {
         const nodes = await getNodes();
+        // Очищаем и создаём Set для гарантирования уникальности
+        const nodeIds = new Set();
+        nodeSelect.innerHTML = "<option value=\"\">Select node</option>";
         nodes.forEach(node => {
-            const option = document.createElement("option");
-            option.value = node.id;
-            option.textContent = `${node.name} (${node.host}:${node.port})`;
-            nodeSelect.appendChild(option);
+            if (!nodeIds.has(node.id)) {
+                nodeIds.add(node.id);
+                const option = document.createElement("option");
+                option.value = node.id;
+                option.textContent = `${node.name} (${node.host}:${node.port})`;
+                nodeSelect.appendChild(option);
+            }
         });
     } catch (err) {
         el("ssh-status").textContent = "Failed to load nodes.";
