@@ -1,4 +1,5 @@
 from sqlalchemy.orm import Session
+from fastapi import HTTPException
 from backend.db.models.node import Node
 
 class NodeRepository:
