@@ -1,7 +1,8 @@
-import { getRuns,getRunResult } from "../api/runs.js";
+import { getRuns, getRunResult } from "../api/runs.js";
 import { authState } from "../state/auth.js";
 import { hideAllPanels } from "../utils/panels.js";
 import { setActiveTab } from "../router/router.js";
+import { showRunLive } from "./run-live.js";
 const el = id => document.getElementById(id);
 
 export async function showRunsPage() {
@@ -12,11 +13,16 @@ export async function showRunsPage() {
 }
 
 function formatDate(value) {
-    if (!value) {return "-";}
+    if (!value) {
+        return "-";
+    }
     return new Date(value).toLocaleString("ru-RU");
 }
+
 function formatDuration(startedAt, finishedAt) {
-    if (!startedAt || !finishedAt) {return "-";}
+    if (!startedAt || !finishedAt) {
+        return "-";
+    }
     const start = new Date(startedAt);
     const finish = new Date(finishedAt);
     return ((finish - start) / 1000).toFixed(2) + " sec";
@@ -29,26 +35,45 @@ async function loadRuns() {
 }
 
 function bindResultButtons() {
-    document.querySelectorAll(".show-result-btn").forEach(btn => {
-        btn.addEventListener("click",
-            async () => {
-                const runId = btn.dataset.runId;
-                const result = await getRunResult(runId);
-                showResultModal(result);
-            }
-        );
-    });
+    document
+        .querySelectorAll(".show-result-btn")
+        .forEach(btn => {
+            btn.addEventListener(
+                "click",
+                async () => {
+                    const runId = btn.dataset.runId;
+                    const result = await getRunResult(runId);
+                    showResultModal(result);
+                }
+            );
+        });
+}
+
+function bindLiveButtons() {
+    document
+        .querySelectorAll(".live-run-btn")
+        .forEach(btn => {
+            btn.addEventListener(
+                "click",
+                () => {
+                    const runId = btn.dataset.runId;
+                    showRunLive(runId);
+                }
+            );
+        });
 }
 
 function showResultModal(result) {
     alert(
         result.stdout ||
         result.stderr ||
-        "Нет данных");
+        "Нет данных"
+    );
 }
 
 function renderRuns(runs) {
-    const tbody = document.getElementById("runs-body");
+    const tbody =
+        document.getElementById("runs-body");
     if (!tbody) {
         return;
     }
@@ -61,7 +86,8 @@ function renderRuns(runs) {
                 : run.status === "FAILED"
                     ? "status-failed"
                     : "status-created";
-        tbody.insertAdjacentHTML("beforeend",
+        tbody.insertAdjacentHTML(
+            "beforeend",
             `
             <tr>
                 <td class="run-tool">
@@ -84,9 +110,24 @@ function renderRuns(runs) {
                 <td>
                     ${duration}
                 </td>
+                <td>
+                    <button
+                        class="show-result-btn btn"
+                        data-run-id="${run.id}">
+                        Result
+                    </button>
+                </td>
+                <td>
+                    <button
+                        class="live-run-btn btn primary"
+                        data-run-id="${run.id}">
+                        Live
+                    </button>
+                </td>
             </tr>
             `
         );
     }
     bindResultButtons();
+    bindLiveButtons();
 }

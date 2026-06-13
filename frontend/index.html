@@ -58,12 +58,12 @@
         </section>
 <!-- страница серверы -->
 <!-- блок runs -->
-<div id="runs-panel" class="hidden">
+<div id="runs-panel" class="hidden panel panel-wide">
   <div class="runs-header">
-    История запусков
+    <h2>История запусков</h2>
   </div>
-    <table class="runs-table">
-      <thead>
+  <table class="runs-table">
+    <thead>
       <tr>
         <th>ID</th>
         <th>Инструмент</th>
@@ -71,10 +71,13 @@
         <th>Начало</th>
         <th>Конец</th>
         <th>Длительность</th>
+        <th>Result</th>
+        <th>Live</th>
       </tr>
     </thead>
-    <tbody id="runs-body"></tbody>
-    </table>
+    <tbody id="runs-body">
+    </tbody>
+  </table>
 </div>
 <!-- блок nodes -->
 <div id="nodes-panel" class="hidden">
@@ -123,6 +126,37 @@
       <pre id="ssh-stderr" class="ssh-pre"></pre>
     </div>
   </div>
+</div>
+<!-- блок wss -->
+<div id="run-live-panel" class="hidden panel panel-wide">
+    <div class="runs-header">
+        <h2>Live Logs</h2>
+    </div>
+    <div class="control-row">
+        <strong>Status:</strong>
+        <span id="live-status">
+            DISCONNECTED
+        </span>
+    </div>
+    <div class="control-row">
+        <progress
+            id="live-progress"
+            max="100"
+            value="0"
+            style="width:100%">
+        </progress>
+    </div>
+    <div class="output">
+        <h3>Logs</h3>
+        <pre
+            id="live-logs"
+            style="
+                white-space: pre-wrap;
+                max-height: 500px;
+                overflow: auto;
+            ">
+        </pre>
+    </div>
 </div>
 <!-- стяг app.js -->
   <script type="module" src="/static/js/app.js"></script>

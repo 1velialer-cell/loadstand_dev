@@ -353,3 +353,8 @@ input[type=range]::-webkit-slider-thumb,input[type=range]::-moz-range-thumb{widt
 .ssh-stdout .ssh-pre{border-color:rgba(76,175,80,0.3)}
 .ssh-stderr .ssh-pre{border-color:rgba(244,67,54,0.3);color:#ffb3b3}
 .ssh-windows h4{margin:0 0 8px;font-size:13px;color:var(--muted)}
+
+#live-status {font-weight: bold;}
+#run-live-panel.hidden {display: none;}
+#live-logs {font-family: monospace;}
+.live-run-btn {min-width: 70px;}
