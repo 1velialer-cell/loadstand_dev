@@ -132,10 +132,10 @@ export function initNodesPage() {
     loadNodes();
 }
 
-export function showNodesPage() {
+export async function showNodesPage() {
     hideAllPanels();
     document.getElementById("nodes-panel").classList.remove("hidden");
     setActiveTab("/nodes");
-    loadNodes();
+    await refreshNodes();
     startAutoRefresh();
 }
