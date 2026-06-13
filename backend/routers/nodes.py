@@ -4,6 +4,7 @@ from backend.db.session import get_db
 from backend.repositories.node_repository import NodeRepository
 from backend.services.node_service import NodeService
 from backend.models.schemas import NodeCreate, NodeUpdate
+from backend.db.models.enums import NodeStatus
 
 router = APIRouter(prefix="/nodes", tags=["nodes"])
 
@@ -36,10 +37,35 @@ async def check_node(node_id: str, db: Session = Depends(get_db)):
     if not node:
         raise HTTPException(status_code=404, detail="Node not found")
     try:
-        # attempt to establish SSH connection using executor (raises on credentials/error)
         await executor.get_connection(node)
-        repo.update(node_id, {"status": "ONLINE", "last_seen": datetime.utcnow()})
-        return {"status": "ONLINE"}
+        repo.update(node_id, {"status": NodeStatus.ONLINE, "last_seen": datetime.utcnow()})
+        return {"status": NodeStatus.ONLINE.value}
     except Exception as exc:
-        repo.update(node_id, {"status": "OFFLINE"})
+        repo.update(node_id, {"status": NodeStatus.OFFLINE})
         raise HTTPException(status_code=400, detail=str(exc))
+
+@router.post("/check-all")
+async def check_all_nodes(db: Session = Depends(get_db)):
+    repo = NodeRepository(db)
+    nodes = repo.list()
+    results = []
+    for node in nodes:
+        status = NodeStatus.OFFLINE
+        last_seen = None
+        error = None
+        try:
+            await executor.get_connection(node)
+            status = NodeStatus.ONLINE
+            last_seen = datetime.utcnow()
+            repo.update(node.id, {"status": status, "last_seen": last_seen})
+        except Exception as exc:
+            error = str(exc)
+            repo.update(node.id, {"status": status})
+        results.append({
+            "node_id": node.id,
+            "name": node.name,
+            "status": status.value,
+            "last_seen": last_seen.isoformat() if last_seen else None,
+            "error": error,
+        })
+    return results
