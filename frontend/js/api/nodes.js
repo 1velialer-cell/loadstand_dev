@@ -17,6 +17,3 @@ export const checkNode = (id) =>
 
 export const checkAllNodes = () =>
     apiRequest("POST", "/nodes/check-all");
-
-export const checkAllNodes = () =>
-    apiRequest("POST", "/nodes/check-all");
