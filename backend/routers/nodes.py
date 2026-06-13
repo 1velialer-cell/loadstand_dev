@@ -36,13 +36,17 @@ async def check_node(node_id: str, db: Session = Depends(get_db)):
     node = repo.get(node_id)
     if not node:
         raise HTTPException(status_code=404, detail="Node not found")
+    status = NodeStatus.OFFLINE
+    last_seen = None
+    error = None
     try:
         await executor.get_connection(node)
-        repo.update(node_id, {"status": NodeStatus.ONLINE, "last_seen": datetime.utcnow()})
-        return {"status": NodeStatus.ONLINE.value}
+        status = NodeStatus.ONLINE
+        last_seen = datetime.utcnow()
     except Exception as exc:
-        repo.update(node_id, {"status": NodeStatus.OFFLINE})
-        raise HTTPException(status_code=400, detail=str(exc))
+        error = str(exc)
+    repo.update(node_id, {"status": status, "last_seen": last_seen} if last_seen else {"status": status})
+    return {"status": status.value, "last_seen": last_seen.isoformat() if last_seen else None, "error": error}
 
 @router.post("/check-all")
 async def check_all_nodes(db: Session = Depends(get_db)):
