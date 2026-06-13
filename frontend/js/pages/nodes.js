@@ -1,8 +1,9 @@
-import {getNodes,createNode,updateNode,deleteNode,checkNode} from "../api/nodes.js";
+import {getNodes,createNode,updateNode,deleteNode,checkNode,checkAllNodes} from "../api/nodes.js";
 import { hideAllPanels } from "../utils/panels.js";
 import { setActiveTab } from "../router/router.js";
 const el = (id) => document.getElementById(id);
 let editingNodeId = null;
+let refreshInterval = null;
 
 function clearForm() {
     el("node-name").value = "";
@@ -26,6 +27,7 @@ function renderNodes(nodes) {
             <div class="node-meta">${node.host}:${node.port}</div><div class="node-meta">SSH: ${node.ssh_login ? node.ssh_login : '—'} / ${node.ssh_password ? '••••••' : '—'}</div>
             <div class="node-meta">${node.role}</div>
             <div class="node-meta status ${node.status}">${node.status}</div>
+            <div class="node-meta">Last seen: ${node.last_seen ? new Date(node.last_seen).toLocaleString() : '—'}</div>
 
             <div class="node-actions">
                 <button class="btn small" data-edit="${node.id}">Edit</button>
@@ -43,6 +45,39 @@ function renderNodes(nodes) {
 export async function loadNodes() {
     const nodes = await getNodes();
     renderNodes(nodes);
+}
+
+async function refreshNodes() {
+    try {
+        await checkAllNodes();
+    } catch (err) {
+        console.warn("Node health refresh failed", err);
+    }
+    await loadNodes();
+}
+
+function startAutoRefresh() {
+    stopAutoRefresh();
+    refreshInterval = setInterval(refreshNodes, 10000);
+}
+
+function stopAutoRefresh() {
+    if (refreshInterval) {
+        clearInterval(refreshInterval);
+        refreshInterval = null;
+    }
+}
+
+function refreshWhenVisible() {
+    if (document.visibilityState === "visible" && window.location.pathname === "/nodes") {
+        refreshNodes();
+    }
+}
+
+function refreshOnPageShow(event) {
+    if (window.location.pathname === "/nodes") {
+        refreshNodes();
+    }
 }
 
 async function saveNode() {
@@ -91,12 +126,16 @@ export function initNodesPage() {
     if (btn) btn.onclick = saveNode;
     window.editNode = editNode;
     window.removeNode = removeNode;
+    window.stopNodesAutoRefresh = stopAutoRefresh;
+    document.addEventListener("visibilitychange", refreshWhenVisible);
+    window.addEventListener("pageshow", refreshOnPageShow);
     loadNodes();
 }
 
-export function showNodesPage() {
+export async function showNodesPage() {
     hideAllPanels();
     document.getElementById("nodes-panel").classList.remove("hidden");
     setActiveTab("/nodes");
-    loadNodes();
+    await refreshNodes();
+    startAutoRefresh();
 }

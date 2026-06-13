@@ -51,6 +51,16 @@ class SSHExecutor:
             return not is_closing()
         return True
 
+    async def invalidate_connection(self, node_id: str) -> None:
+        async with self.lock:
+            conn = self.connections.pop(node_id, None)
+        if conn:
+            try:
+                conn.close()
+                await conn.wait_closed()
+            except Exception:
+                pass
+
     async def get_connection(self, node: Node) -> asyncssh.SSHClientConnection:
         async with self.lock:
             conn = self.connections.get(node.id)

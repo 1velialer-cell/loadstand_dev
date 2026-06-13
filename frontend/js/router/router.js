@@ -35,6 +35,7 @@ export function renderRoute() {
     const path = window.location.pathname;
     const handler = routes[path];
     if (handler) {
+        window.stopNodesAutoRefresh?.();
         hideAllPages();
         handler();
         return;

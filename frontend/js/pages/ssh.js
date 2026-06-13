@@ -1,10 +1,20 @@
-import { executeSSHCommand, getSSHCommand, stopSSHCommand } from "../api/ssh.js";
+import { executeSSHCommand, getSSHCommand, stopSSHCommand, resetSSHConnection, getSSHConnectionStatus } from "../api/ssh.js";
 import { getNodes } from "../api/nodes.js";
 import { hideAllPanels } from "../utils/panels.js";
 import { setActiveTab } from "../router/router.js";
 const el = id => document.getElementById(id);
 let currentCommandId = null;
 let currentNodeId = null;
+
+function setSSHStatus(message, statusClass = null) {
+    const statusEl = el("ssh-status");
+    if (!statusEl) return;
+    statusEl.textContent = message;
+    statusEl.classList.remove("online", "offline", "unknown");
+    if (statusClass) {
+        statusEl.classList.add(statusClass);
+    }
+}
 
 async function populateNodeOptions() {
     const nodeSelect = el("ssh-node");
@@ -37,36 +47,87 @@ export async function showSSHPage() {
     el("ssh-command").value = "";
     el("ssh-stdout").textContent = "";
     el("ssh-stderr").textContent = "";
-    el("ssh-status").textContent = "";
+    setSSHStatus("Select a node to check SSH status.", "unknown");
+    await refreshSSHStatus();
 }
 
 export function initSSHPage() {
     const runBtn = el("ssh-run-btn");
     const stopBtn = el("ssh-stop-btn");
+    const resetBtn = el("ssh-reset-btn");
     if (runBtn) {
         runBtn.addEventListener("click", runSSHCommand);
     }
     if (stopBtn) {
         stopBtn.addEventListener("click", stopSSHCommandAction);
     }
+    if (resetBtn) {
+        resetBtn.addEventListener("click", resetSSHConnectionAction);
+    }
+    const nodeSelect = el("ssh-node");
+    if (nodeSelect) {
+        nodeSelect.addEventListener("change", refreshSSHStatus);
+    }
+    document.addEventListener("visibilitychange", () => {
+        if (document.visibilityState === "visible" && window.location.pathname === "/ssh") {
+            refreshSSHStatus();
+        }
+    });
+    window.addEventListener("pageshow", (event) => {
+        if (window.location.pathname === "/ssh") {
+            refreshSSHStatus();
+        }
+    });
 }
 
 async function runSSHCommand() {
     const nodeId = el("ssh-node").value;
     const command = el("ssh-command").value.trim();
     if (!nodeId || !command) {
-        el("ssh-status").textContent = "Node and command required.";
+        setSSHStatus("Node and command required.", "unknown");
         return;
     }
-    el("ssh-status").textContent = "Executing...";
+    setSSHStatus("Executing...", "unknown");
     try {
         const result = await executeSSHCommand(nodeId, { command });
         currentCommandId = result.command_id;
         currentNodeId = nodeId;
-        el("ssh-status").textContent = `Running: ${currentCommandId}`;
+        setSSHStatus(`Running: ${currentCommandId}`, "unknown");
         pollSSHResult();
     } catch (err) {
-        el("ssh-status").textContent = err.message || "SSH execution failed.";
+        setSSHStatus(err.message || "SSH execution failed.", "offline");
+    }
+}
+
+async function refreshSSHStatus() {
+    const nodeId = el("ssh-node")?.value;
+    if (!nodeId) {
+        setSSHStatus("Select a node to check SSH status.", "unknown");
+        return;
+    }
+    setSSHStatus("Refreshing SSH status...", "unknown");
+    try {
+        const result = await getSSHConnectionStatus(nodeId);
+        const status = result.status?.toLowerCase() || "unknown";
+        setSSHStatus(`SSH status: ${result.status}`, status);
+    } catch (err) {
+        setSSHStatus(err.message || "SSH status unavailable.", "offline");
+    }
+}
+
+async function resetSSHConnectionAction() {
+    const nodeId = el("ssh-node")?.value;
+    if (!nodeId) {
+        setSSHStatus("Select a node to reset.", "unknown");
+        return;
+    }
+    setSSHStatus("Resetting SSH connection...", "unknown");
+    try {
+        await resetSSHConnection(nodeId);
+        setSSHStatus("SSH connection reset.", "unknown");
+        await refreshSSHStatus();
+    } catch (err) {
+        setSSHStatus(err.message || "SSH reset failed.", "offline");
     }
 }
 
@@ -90,15 +151,15 @@ async function pollSSHResult() {
 
 async function stopSSHCommandAction() {
     if (!currentCommandId) {
-        el("ssh-status").textContent = "No running command.";
+        setSSHStatus("No running command.", "unknown");
         return;
     }
     try {
         const result = await stopSSHCommand(currentCommandId);
-        el("ssh-status").textContent = `Stopped: ${result.status}`;
+        setSSHStatus(`Stopped: ${result.status}`, "unknown");
         el("ssh-stdout").textContent = result.stdout || "";
         el("ssh-stderr").textContent = result.stderr || "";
     } catch (err) {
-        el("ssh-status").textContent = err.message || "Failed to stop command.";
+        setSSHStatus(err.message || "Failed to stop command.", "offline");
     }
 }

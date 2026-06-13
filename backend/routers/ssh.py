@@ -28,6 +28,22 @@ async def execute_command(node_id: str, payload: SSHCommandRequest, node: Node =
     except Exception as exc:
         raise HTTPException(status_code=500, detail=str(exc))
 
+@router.post("/{node_id}/reset")
+async def reset_connection(node_id: str, node: Node = Depends(get_node)):
+    try:
+        await executor.invalidate_connection(node_id)
+        return {"status": "reset"}
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=str(exc))
+
+@router.get("/{node_id}/status")
+async def ssh_status(node_id: str, node: Node = Depends(get_node)):
+    try:
+        await executor.get_connection(node)
+        return {"status": "ONLINE"}
+    except Exception as exc:
+        raise HTTPException(status_code=400, detail=str(exc))
+
 @router.post("/commands/{command_id}/stop")
 async def stop_command(command_id: str):
     try:

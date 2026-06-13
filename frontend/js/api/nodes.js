@@ -14,3 +14,6 @@ export const deleteNode = (id) =>
 
 export const checkNode = (id) =>
     apiRequest("POST", `/nodes/${id}/check`);
+
+export const checkAllNodes = () =>
+    apiRequest("POST", "/nodes/check-all");
