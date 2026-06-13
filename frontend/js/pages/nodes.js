@@ -1,5 +1,6 @@
 import {getNodes,createNode,updateNode,deleteNode,checkNode} from "../api/nodes.js";
 import { hideAllPanels } from "../utils/panels.js";
+import { setActiveTab } from "../router/router.js";
 const el = (id) => document.getElementById(id);
 let editingNodeId = null;
 
@@ -90,5 +91,6 @@ export function initNodesPage() {
 export function showNodesPage() {
     hideAllPanels();
     document.getElementById("nodes-panel").classList.remove("hidden");
+    setActiveTab("/nodes");
     loadNodes();
 }

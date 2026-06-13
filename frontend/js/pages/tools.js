@@ -1,5 +1,6 @@
 import {createRun,getRunResult} from "../api/runs.js";
 import { hideAllPanels } from "../utils/panels.js";
+import { setActiveTab } from "../router/router.js";
 const el = id => document.getElementById(id);
 const MESSAGES = {
     testSuccess: "✅ Тест завершён",
@@ -69,8 +70,6 @@ export function showToolPage(toolName) {
     el("smoke_button").classList.toggle("hidden",toolName !== "smoke");
     el("loading_button").classList.toggle("hidden",toolName !== "loading");
     el("stability_button").classList.toggle("hidden",toolName !== "stability");
-    document.querySelectorAll(".tab").forEach(tab => {
-        tab.classList.toggle("active",tab.dataset.route === `/${toolName}`);
-    });
+    setActiveTab(`/${toolName}`);
 }
 

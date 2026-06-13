@@ -1,5 +1,6 @@
 import {getMediaServers,getLoadServers,getServer,createServer,updateServer,removeServer} from "../api/servers.js";
 import { hideAllPanels } from "../utils/panels.js";
+import { setActiveTab } from "../router/router.js";
 const el = id =>document.getElementById(id);
 let editingServerId = null;
 
@@ -38,6 +39,7 @@ export async function showServersPage() {
     el("tests-panel").classList.add("hidden");
     el("runs-panel").classList.add("hidden");
     el("servers-panel").classList.remove("hidden");
+    setActiveTab("/servers");
     await loadServers();
 }
 
