@@ -31,28 +31,44 @@ Node
 * PostgreSQL
 * Alembic
 * Repository Pattern
+* AsyncSSH
 Реализовано:
-* Run System
-* Node Manager
-* Auth API
-* Runs API
-* Nodes API
-* SSH Executor
-* Node Health Check
+* Run System (TestRun, RunStatus, RunResult, Migrations)
+* Node Manager (Node, NodeRole, NodeStatus CRUD API)
+* Auth API (Login/Logout)
+* Runs API (History, Results)
+* Nodes API (CRUD, Health Check, Bulk Check)
+* SSH Executor (Async connections, pool, command execution)
+* SSH Management API (Status, Reset)
+* Node Health Check (Online/Offline tracking, Last Seen)
+* SSH Connection Caching with invalidation on edit/delete
 
 ---
 
 ## Frontend
 * Vanilla JS
-* SPA Router
-* History API
+* SPA Router с History API
+* Fetch API client
 Страницы:
-* Smoke
-* Loading
-* Stability
-* Runs
-* Nodes
-* SSH
+* Smoke (tool execution)
+* Loading (tool execution)
+* Stability (tool execution)
+* Runs (history table)
+* Nodes (CRUD, health check, SSH status)
+* SSH (command execution, status, reset)
+Компоненты:
+* Navbar (tabs, logout)
+* Debug Panel
+* Loader
+* Modal
+* Sidebar
+Функции:
+* Node auto-refresh (10s interval)
+* SSH status refresh on tab switch/reload
+* SSH connection reset button
+* Status color indicators (green/red/yellow)
+* Masked SSH credentials display
+* Command polling (1s interval)
 
 ---
 
@@ -224,6 +240,44 @@ Database
 5. Учитывать целевую архитектуру.
 Приоритет:
 Код → Архитектура → Объяснение
+
+---
+
+# Завершённые этапы
+
+## Этап 1: Run System ✓
+* TestRun, RunStatus, RunResult модели
+* PostgreSQL хранилище с Alembic миграциями
+* Repository, Service, Router слои
+* CRUD API
+* Frontend таблица истории запусков
+* Хранение stdout/stderr результатов
+
+## Этап 2: Node Manager ✓
+* Node, NodeRole, NodeStatus модели
+* CRUD API с пагинацией и фильтрацией
+* NodeRepository, NodeService слои
+* Frontend CRUD UI (Create, Read, Update, Delete)
+* SSH параметры хранение и маскирование
+* Last Seen отслеживание
+
+## Этап 3: SSH Executor ✓
+* AsyncSSH с пулом соединений
+* Кэширование по node.id с инвалидацией
+* Async command execution с timeout
+* stdout/stderr разделённый вывод
+* Process monitoring и graceful stop
+* SSH API endpoints
+
+## Этап 4: Node Monitoring ✓
+* SSH Health Check (/nodes/{id}/check и /nodes/check-all)
+* Online/Offline status tracking
+* SSH connection status (/ssh/{id}/status)
+* SSH connection reset (/ssh/{id}/reset)
+* Frontend UI с цветовыми индикаторами (зеленый/красный)
+* Auto-refresh на смену ноды, возврат на таб, pageshow
+* Cache invalidation при редактировании SSH параметров
+* Batch check всех нод с ошибкой-handling
 
 ---
 
