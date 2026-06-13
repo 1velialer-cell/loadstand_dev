@@ -6,6 +6,7 @@ import {initServersPage} from "./pages/servers.js";
 import {navigate,renderRoute} from "./router/router.js";
 import {initSidebar} from "./components/sidebar.js";
 import {initNavbar} from "./components/navbar.js";
+import { initSSHPage } from "./pages/ssh.js";
 
 // document.addEventListener("DOMContentLoaded", () => {
 //     initSidebar();
@@ -25,6 +26,7 @@ function bootstrap() {
     initLoginPage();
     initToolsPage();
     initServersPage();
+  initSSHPage();
     initTabs();
     renderRoute();
     initNodesPage();

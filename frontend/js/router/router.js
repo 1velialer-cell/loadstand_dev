@@ -2,6 +2,7 @@ import { showServersPage } from "../pages/servers.js";
 import { showToolPage } from "../pages/tools.js";
 import { showRunsPage } from "../pages/runs.js";
 import { showNodesPage } from "../pages/nodes.js";
+import { showSSHPage } from "../pages/ssh.js";
 
 const routes = {};
 
@@ -48,5 +49,6 @@ registerRoute("/stability", () => showToolPage("stability"));
 registerRoute("/servers", showServersPage);
 registerRoute("/runs", showRunsPage);
 registerRoute("/nodes", showNodesPage);
+registerRoute("/ssh", showSSHPage);
 
 window.addEventListener("popstate", renderRoute);

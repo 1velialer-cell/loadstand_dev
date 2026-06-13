@@ -34,6 +34,7 @@
             <button data-route="/servers" class="tab">SERVERS</button>
             <button data-route="/runs" class="tab">RUNS</button>
             <button data-route="/nodes" class="tab">NODES</button>
+            <button data-route="/ssh" class="tab">SSH</button>
           </div>
         </div>
 <!-- header справа -->
@@ -117,6 +118,29 @@
     </div>
     <div id="nodes-list"></div>
     <div id="node-details" class="hidden"></div>
+</div>
+<!-- блок ssh -->
+<div id="ssh-panel" class="hidden">
+  <div class="ssh-header">
+    <h2>SSH Executor</h2>
+  </div>
+  <div class="control-row">
+    <label for="ssh-node">Node</label>
+    <select id="ssh-node"></select>
+  </div>
+  <div class="control-row">
+    <label for="ssh-command">Command</label>
+    <input id="ssh-command" placeholder="Enter shell command" />
+  </div>
+  <div class="buttons">
+    <button id="ssh-run-btn" class="btn primary">Run</button>
+    <button id="ssh-stop-btn" class="btn ghost">Stop</button>
+  </div>
+  <div class="ssh-status" id="ssh-status"></div>
+  <div class="output">
+    <h3>SSH Output</h3>
+    <pre id="ssh-output" style="white-space: pre-wrap; max-height:400px; overflow:auto;"></pre>
+  </div>
 </div>
 <!-- стяг app.js -->
   <script type="module" src="/static/js/app.js"></script>

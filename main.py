@@ -7,6 +7,7 @@ from backend.routers.tools import router as tools_router
 from backend.routers.logo import router as logo_router 
 from backend.routers.servers import router as servers_router
 from backend.routers.runs import router as runs_router
+from backend.routers.ssh import router as ssh_router
 from backend.db.init_db import init_db
 from backend.db.base import Base
 from backend.db.session import engine
@@ -20,6 +21,7 @@ app.include_router(tools_router, prefix="/api")
 app.include_router(logo_router, prefix="/api")
 app.include_router(runs_router, prefix="/api")
 app.include_router(nodes_router, prefix="/api")
+app.include_router(ssh_router, prefix="/api")
 
 @app.get("/")
 async def root():
