@@ -17,27 +17,6 @@ class ToolResult(BaseModel):
     stderr: str = ""
     error: Optional[str] = None
 
-class ServerCreate(BaseModel):
-    name: str
-    host: str
-    ssh_login: str
-    ssh_password: str
-    type: Literal["media", "load"]
-
-class Server(ServerCreate):
-    id: str
-
-class ServerDelete(BaseModel):
-    id: str
-
-class ServerPatch(BaseModel):
-    id: str
-    name: str | None = None
-    host: str | None = None
-    ssh_login: str | None = None
-    ssh_password: str | None = None
-    type: Literal["media","load"] | None = None
-
 class RunStatus(str, Enum):
     CREATED = "CREATED"
     PREPARING = "PREPARING"
